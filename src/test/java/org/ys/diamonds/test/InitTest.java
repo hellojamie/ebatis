@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Test;
+
 import org.ys.diamonds.impl.Init;
 import org.ys.diamonds.impl.VerificationTable;
 import org.ys.diamonds.pojo.ActionContext;
