@@ -1,4 +1,4 @@
-package org.yy.diamonds.test;
+package org.ys.diamonds.test;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InitTest {
 
-	@Test
+	//@Test
 	public void getTest(){
 		
 		// step 1
