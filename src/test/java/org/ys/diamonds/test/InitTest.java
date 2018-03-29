@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
-
+import org.junit.Test;
 import org.ys.diamonds.impl.Init;
 import org.ys.diamonds.impl.VerificationTable;
 import org.ys.diamonds.pojo.ActionContext;
@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class InitTest {
 
-	//@Test
+	@Test
 	public void getTest(){
 		
 		// step 1
@@ -34,8 +34,13 @@ public class InitTest {
 			e.printStackTrace();
 		}
 		
+		long a1 = System.currentTimeMillis();
+		
 		Init<FiledTest> init = new Init<FiledTest>(new ActionContext<FiledTest>(), inputStream, new FiledTest());
 		ActionContext<FiledTest> act = init.start();
+		
+		long a2 = System.currentTimeMillis() - a1;
+		System.out.println(a2 / 1000);
 		
 		// step 3
 		// act.setInputStream(inputStream);
@@ -50,7 +55,7 @@ public class InitTest {
 			System.out.println(string);	
 			List<SheetInfo<FiledTest>> info = act.getInfo();
 			List<FiledTest> info2 = info.get(0).getInfo();
-			System.out.println(mapper.writeValueAsString(info2));
+			//System.out.println(mapper.writeValueAsString(info2));
 			
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block

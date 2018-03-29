@@ -3,21 +3,44 @@ package org.ys.diamonds.pojo;
 import java.util.Date;
 
 import org.ys.diamonds.annotation.Mapping;
+import org.ys.diamonds.annotation.MappingSheetName;
 
 public class FiledTest {
-	
+
 	@Mapping(key = "日期")
 	private Date date;
 	
-	@Mapping(key = "编号")
-	private Integer num;
+	@Mapping(key = "点数")
+	private Double num;
 	
-	@Mapping(key = "孩子姓名")
+	@Mapping(key = "姓名")
 	private String name;
 	
-	@Mapping(key = "电话号码")
+	@Mapping(key = "手机号")
 	private String phone;
 	
+	@Mapping(key = "年龄")
+	private Integer age;
+	
+	@MappingSheetName
+	private String type;
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public Integer getAge() {
+		return age;
+	}
+
+	public void setAge(Integer age) {
+		this.age = age;
+	}
+
 	public Date getDate() {
 		return date;
 	}
@@ -26,11 +49,11 @@ public class FiledTest {
 		this.date = date;
 	}
 
-	public Integer getNum() {
+	public Double getNum() {
 		return num;
 	}
 
-	public void setNum(Integer num) {
+	public void setNum(Double num) {
 		this.num = num;
 	}
 
