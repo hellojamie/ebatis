@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.Format;
 import java.text.ParseException;
@@ -20,22 +18,18 @@ import java.util.Map;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.ys.diamonds.annotation.LineNumber;
 import org.ys.diamonds.annotation.Mapping;
 import org.ys.diamonds.annotation.MappingSheetName;
 import org.ys.diamonds.api.DataHandleAction;
 import org.ys.diamonds.exception.SheetHeadNotEqualException;
 import org.ys.diamonds.pojo.ActionContext;
-import org.ys.diamonds.pojo.FiledTest;
 import org.ys.diamonds.pojo.SheetInfo;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * 解析excel表格内容
@@ -207,6 +201,10 @@ public class AnalysisExcel<T> implements DataHandleAction {
 			
 			Row row2 = sheet.getRow(i);
 			
+			// 是否物理空行
+			if(row2 == null)
+				continue;
+			
 			// 判断行是否为空
 			boolean rowEmpty = isRowEmpty(row2);
 			
@@ -220,7 +218,7 @@ public class AnalysisExcel<T> implements DataHandleAction {
 				rowMap.put(headStr.get(y), analysisRow.get(y));
 			}
 			
-			reflexObject = getReflexObject(object.getClass(),headStr,analysisRow,sheet.getSheetName());
+			reflexObject = getReflexObject(object.getClass(),headStr,analysisRow,sheet.getSheetName(), i);
 			
 			sheetList.add(reflexObject);
 		}
@@ -298,7 +296,7 @@ public class AnalysisExcel<T> implements DataHandleAction {
 		return true;
 	}
 	
-	public T getReflexObject(Class<?> class1, List<String> headStr, List<String> analysisRow, String sheetName){
+	public T getReflexObject(Class<?> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
 		/*Object objects = act.getObjects();
 		Class<?> class1 = objects.getClass();*/
 		
@@ -450,6 +448,48 @@ public class AnalysisExcel<T> implements DataHandleAction {
 							parseBoolean = Boolean.parseBoolean(sheetName);
 						}catch(Exception e){}
 						class1.getMethod(methodName, Boolean.class).invoke(object, parseBoolean);
+						break;
+					}
+			
+			break;
+			
+			}
+			
+			
+			// 遍历寻找LineNumber
+			for(Field x:fields){
+				LineNumber lineNumber = x.getAnnotation(LineNumber.class);
+
+				if(lineNumber == null) {
+					continue;
+				}
+				
+				// 如果发现lineNumber注解，解析到实体中
+				
+					String name = x.getName(); // 属性名
+					String methodName = "set" + upperCase(name); // 方法名
+					Class<?> type = x.getType(); // 类型
+					switch(type.toString()){
+					case "class java.util.Date":
+						class1.getMethod(methodName, Date.class).invoke(object, null);
+						break;
+					case "class java.lang.Integer":
+						class1.getMethod(methodName, Integer.class).invoke(object, lineNum);
+						break;
+					case "class java.lang.String":
+						class1.getMethod(methodName, String.class).invoke(object, lineNum);
+						break;
+					case "class java.lang.Long":
+						class1.getMethod(methodName, Long.class).invoke(object, lineNum);
+						break;
+					case "class java.lang.Double":
+						class1.getMethod(methodName, Double.class).invoke(object, lineNum);
+						break;
+					case "class java.lang.Short":
+						class1.getMethod(methodName, Short.class).invoke(object, lineNum);
+						break;
+					case "class java.lang.Boolean":
+						class1.getMethod(methodName, Boolean.class).invoke(object, null);
 						break;
 					}
 			

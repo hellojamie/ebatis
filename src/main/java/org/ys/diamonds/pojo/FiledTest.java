@@ -2,6 +2,7 @@ package org.ys.diamonds.pojo;
 
 import java.util.Date;
 
+import org.ys.diamonds.annotation.LineNumber;
 import org.ys.diamonds.annotation.Mapping;
 import org.ys.diamonds.annotation.MappingSheetName;
 
@@ -25,6 +26,17 @@ public class FiledTest {
 	@MappingSheetName
 	private String type;
 	
+	@LineNumber
+	private Integer line;
+	
+	public Integer getLine() {
+		return line;
+	}
+
+	public void setLine(Integer line) {
+		this.line = line;
+	}
+
 	public String getType() {
 		return type;
 	}
