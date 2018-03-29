@@ -13,7 +13,7 @@ import org.ys.diamonds.pojo.FiledTest;
  */
 public class Init<T> {
 	
-	private ActionContext<T> act;
+	private ActionContext<T> act = new ActionContext<T>();
 	
 	private InputStream inp;
 	
@@ -21,9 +21,8 @@ public class Init<T> {
 	
 	private VerificationTable<T> ver;
 	
-	public Init(ActionContext<T> act, InputStream inp, T t) {
+	public Init(InputStream inp, T t) {
 		super();
-		this.act = act;
 		this.inp = inp;
 		this.t = t;
 		act.setInputStream(inp);
@@ -31,7 +30,6 @@ public class Init<T> {
 	}
 	
 	public ActionContext<T> start(){
-		boolean e = false;
 		ver = new VerificationTable<T>();
 		ver.prepare(act);
 		return act;

@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.ys.diamonds.emnu.FileType;
 
@@ -35,6 +34,17 @@ public class ActionContext<T> {
 	
 	@JsonIgnore
 	private T objects;
+	
+	// 是否完成链式操作，默认false
+	private boolean result = false;
+
+	public boolean isResult() {
+		return result;
+	}
+
+	public void setResult(boolean result) {
+		this.result = result;
+	}
 
 	public T getObjects() {
 		return objects;

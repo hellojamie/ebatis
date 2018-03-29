@@ -16,14 +16,12 @@ import org.ys.diamonds.util.CheckFileType;
  * @author 杨硕
  *
  */
-public class VerificationTable<T> implements DataHandleAction{
+public class VerificationTable<T> implements DataHandleAction<T>{
 
 	AnalysisExcel<T> analysisExcel = new AnalysisExcel<T>();
 	
 	@Override
-	public boolean prepare(ActionContext act) {
-		
-		boolean b = false;
+	public void prepare(ActionContext<T> act) {
 		
 		// 获取文件格式是否正确，文件大小是否超量
 		FileType type = null;
@@ -64,19 +62,19 @@ public class VerificationTable<T> implements DataHandleAction{
 		}finally{
 			
 				try {
-					if(inputStream != null)
-					inputStream.close();
+					if(inputStream != null) {
+						inputStream.close();
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
+					rollback(act);
 				}
 		}
-		
-		return b;
 		
 	}
 
 	@Override
-	public boolean commit(ActionContext act) {
+	public boolean commit(ActionContext<T> act) {
 
 		analysisExcel.prepare(act);
 		
@@ -84,8 +82,10 @@ public class VerificationTable<T> implements DataHandleAction{
 	}
 
 	@Override
-	public boolean rollback(ActionContext act) {
-		// TODO Auto-generated method stub
+	public boolean rollback(ActionContext<T> act) {
+		
+		act.setResult(false);
+		
 		return false;
 	}
 	

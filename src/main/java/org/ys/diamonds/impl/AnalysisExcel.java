@@ -36,20 +36,18 @@ import org.ys.diamonds.pojo.SheetInfo;
  * @author 杨硕
  *
  */
-public class AnalysisExcel<T> implements DataHandleAction {
+public class AnalysisExcel<T> implements DataHandleAction<T> {
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public boolean prepare(ActionContext act) {
-		
-		boolean b = false;
+	public void prepare(ActionContext<T> act) {
 		
 		InputStream inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
 		
 		Workbook wb = null;
 		// 创建poi对象
 		
-		List<SheetInfo> excelInfo = act.getInfo();
+		List<SheetInfo<T>> excelInfo = act.getInfo();
 		
 		try{
 			switch(act.getFileType()){
@@ -62,6 +60,7 @@ public class AnalysisExcel<T> implements DataHandleAction {
 			}
 		}catch(IOException e){
 			e.printStackTrace();
+			rollback(act);
 		}
 		// sheet数量
 		int numberOfSheets = wb.getNumberOfSheets();
@@ -97,6 +96,7 @@ public class AnalysisExcel<T> implements DataHandleAction {
 					} catch (SheetHeadNotEqualException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						rollback(act);
 					}
 				}
 				
@@ -107,7 +107,7 @@ public class AnalysisExcel<T> implements DataHandleAction {
 		for(int i=0; i<numberOfSheets; i++){
 			Sheet sheet = wb.getSheetAt(i);
 			List<T> analysisSheet = analysisSheet(sheet,act.getObjects());
-			SheetInfo sheetInfo = new SheetInfo();
+			SheetInfo<T> sheetInfo = new SheetInfo<T>();
 			sheetInfo.setInfo(analysisSheet);
 			sheetInfo.setSheetName(sheet.getSheetName());
 			sheetInfo.setLine(sheet.getLastRowNum());
@@ -116,19 +116,23 @@ public class AnalysisExcel<T> implements DataHandleAction {
 			excelInfo.add(sheetInfo);
 		}
 		
-		return b;
+		commit(act);
 		
 	}
 
 	@Override
-	public boolean commit(ActionContext act) {
-		// TODO Auto-generated method stub
+	public boolean commit(ActionContext<T> act) {
+		
+		act.setResult(true);
+		
 		return true;
 	}
 
 	@Override
-	public boolean rollback(ActionContext act) {
-		// TODO Auto-generated method stub
+	public boolean rollback(ActionContext<T> act) {
+
+		act.setResult(false);
+		
 		return false;
 	}
 	
@@ -147,8 +151,9 @@ public class AnalysisExcel<T> implements DataHandleAction {
 		List<T> sheetList = new ArrayList<T>();
 		// 获取头信息
 		Row row = sheet.getRow(0);
-		if(row == null)
+		if(row == null) {
 			return null;
+		}
 		int cellNum = row.getLastCellNum(); // 头数量
 		List<String> headStr = new ArrayList<String>();	// 头内容
 		

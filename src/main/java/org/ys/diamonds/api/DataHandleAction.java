@@ -4,7 +4,7 @@ import org.ys.diamonds.pojo.ActionContext;
 
 public interface DataHandleAction<T> {
 	
-	boolean prepare(ActionContext<T> act);
+	void prepare(ActionContext<T> act);
 	
 	boolean commit(ActionContext<T> act);
 	
