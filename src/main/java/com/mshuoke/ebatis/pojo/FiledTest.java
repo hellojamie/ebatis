@@ -7,7 +7,6 @@ import com.mshuoke.ebatis.annotation.Mapping;
 import com.mshuoke.ebatis.annotation.MappingSheetName;
 
 public class FiledTest {
-	@LineNumber
 	@Mapping(key = "日期")
 	private Date date;
 	

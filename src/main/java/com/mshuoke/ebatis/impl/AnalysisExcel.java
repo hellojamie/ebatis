@@ -8,19 +8,15 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.DecimalFormat;
-import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,7 +93,6 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 					try {
 						throw new SheetHeadNotEqualException("Sheets head size not equal!");
 					} catch (SheetHeadNotEqualException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 						rollback(act);
 					}
@@ -206,7 +201,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			 */
 			
 			
-			Map<String,String> rowMap = new HashMap<String,String>();
+			// Map<String,String> rowMap = new HashMap<String,String>();
 			
 			// 反射对象
 			T reflexObject = null;
@@ -234,6 +229,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			
 			reflexObject = getReflexObject(object.getClass(),headStr,analysisRow,sheet.getSheetName(), i);
 			
+			// 如果在反射期间引发错误，该行将做失败处理
+			if(reflexObject == null) {
+				continue;
+			}
+			
 			sheetList.add(reflexObject);
 		}
 		
@@ -247,6 +247,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @param cellNum
 	 * @return
 	 */
+	@SuppressWarnings("deprecation")
 	List<String> analysisRow(Row row,int cellNum){
 		List<String> cellLi = new ArrayList<String>();
 		for(int y = 0; y < cellNum; y++){
@@ -266,9 +267,6 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				if(HSSFDateUtil.isCellDateFormatted(cell)){
-					
-					DataFormatter dataFormatter = new DataFormatter();
-					Format format = dataFormatter.createFormat(cell);
 					Date date = cell.getDateCellValue();
 					if(date != null){
 						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -304,14 +302,15 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @return   
 	 * @return boolean
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean isRowEmpty(Row row){
 		for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
 			
 			Cell cell = row.getCell(c);
 		
-			if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)
-		
-			return false;
+			if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK) {
+				return false;
+			}
 		
 		}
 		
@@ -327,6 +326,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @param lineNum 第几行
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	public T getReflexObject(Class<?> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
 		/*Object objects = act.getObjects();
 		Class<?> class1 = objects.getClass();*/
@@ -374,12 +374,20 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 					this.lineNumberOperation(class1, object, x, lineNum);
 				}
 
-
-				
 			}
 		
-		}catch(Exception e) {
-			
+		}catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
 		}
 		
 		return (T)object;
@@ -524,6 +532,9 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			class1.getMethod(methodName, Integer.class).invoke(object, parseInt);
 			break;
 		case "class java.lang.String":
+			if(fieldValue.equals("")) {
+				break;
+			}
 			class1.getMethod(methodName, String.class).invoke(object, fieldValue);
 			break;
 		case "class java.lang.Long":

@@ -19,12 +19,7 @@ public class InitTest {
 	@Test
 	public void getTest(){
 		
-		// step 1
-		// ActionContext<FiledTest> act = new ActionContext<FiledTest>();
 		InputStream inputStream = null;
-		
-		// step 2
-		// act.setObjects(new FiledTest());
 		
 		try {
 			inputStream = new FileInputStream("000.xlsx");
@@ -39,14 +34,8 @@ public class InitTest {
 		ActionContext<FiledTest> act = init.start();
 		// end==============================================================================
 		long a2 = System.currentTimeMillis() - a1;
-		System.out.println(a2 / 1000);
-		
-		// step 3
-		// act.setInputStream(inputStream);
-		// step 4
-		// VerificationTable<FiledTest> a = new VerificationTable<FiledTest>();
-		// step 5
-		// a.prepare(act);
+		System.out.println("耗时（s）：" + a2 / 1000);
+		System.out.println("耗时（ms）：" + a2);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
