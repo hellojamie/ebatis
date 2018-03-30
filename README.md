@@ -1,2 +1,2 @@
-# Diamonds
-用于解析excel表格内容到实体
+# ebatis
+用于解析excel表格内容到java bean
