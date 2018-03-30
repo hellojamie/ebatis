@@ -17,4 +17,8 @@ import java.lang.annotation.Target;
 @Retention(value = RetentionPolicy.RUNTIME)
 public @interface Mapping {
 	public String key();
+	
+	public String rex() default "";
+	
+	public boolean delNull() default false;
 }

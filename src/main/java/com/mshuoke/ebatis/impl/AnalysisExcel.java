@@ -13,6 +13,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -46,7 +48,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		Workbook wb = null;
 		// 创建poi对象
 		
-		List<SheetInfo<T>> excelInfo = act.getInfo();
+		List<SheetInfo<T>> excelInfo = act.getSheets();
 		
 		try{
 			switch(act.getFileType()){
@@ -57,6 +59,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				wb = new XSSFWorkbook(inputStream);
 				break;
 			}
+			System.out.println("POI解析完毕");
 		}catch(IOException e){
 			e.printStackTrace();
 			rollback(act);
@@ -361,7 +364,14 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				
 				if(m != null) {
 					// 字段映射操作
-					this.mappingOperation(class1, object, x, m, headStr, analysisRow);
+					boolean mappingOperation = this.mappingOperation(class1, object, x, m, headStr, analysisRow);
+					
+					// 获取注解是否删除null属性
+					// 如果这次映射失败，属性值为null，并且注解标识需要删除该字段为null的信息，则删除
+					if(m.delNull() && !mappingOperation) {
+						return null;
+					}
+					
 				}
 				
 				if(msn != null) {
@@ -425,12 +435,15 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException 
 	 */
-	private void mappingOperation(Class<?> class1, Object object, Field field, Mapping mapping, List<String> headStr, List<String> analysisRow) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+	private boolean mappingOperation(Class<?> class1, Object object, Field field, Mapping mapping, List<String> headStr, List<String> analysisRow) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		
 		// 获取字段名称
 		String fieldName = field.getName();
 		// 获取注解映射属性
 		String title = mapping.key();
+		// 获取注解正则属性
+		String rex = mapping.rex();
+		
 		// 拼接方法名
 		String methodName = new StringBuilder()
 				.append("set").append(upperCase(fieldName)).toString();
@@ -442,11 +455,26 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			String thisHead = headStr.get(y);
 			if(title.equals(thisHead) && !thisHead.equals("") && thisHead != null){
 				
-				this.screening(class1, object, methodName, fieldType, analysisRow.get(y));
+				String string = analysisRow.get(y);
 				
-				break;
+				// 判断正则是否为空，为空则不处理
+				if(!rex.equals("")) {
+					
+					Pattern compile = Pattern.compile(rex);
+					Matcher matcher = compile.matcher(string);
+					if(!matcher.matches()) {
+						// 如果匹配失败设为null
+						return false;
+					}
+				}
+				
+				this.screening(class1, object, methodName, fieldType, string);
+				
+				return true;
 			}
 		}
+		
+		return false;
 	}
 	
 	/**

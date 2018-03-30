@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * 获取当前数据在页面中的行数，放入实体中对应属性，应
+ * 获取当前数据在页面中的行数，放入实体中对应属性
  * @author 杨硕
  *
  */

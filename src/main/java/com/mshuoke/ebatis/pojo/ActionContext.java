@@ -20,7 +20,7 @@ public class ActionContext<T> {
 	private InputStream inputStream;
 	
 	// 表格内数据
-	private List<SheetInfo<T>> info = new ArrayList<SheetInfo<T>>();
+	private List<SheetInfo<T>> sheets = new ArrayList<SheetInfo<T>>();
 	
 	// 文件类型
 	private FileType fileType;
@@ -99,12 +99,12 @@ public class ActionContext<T> {
 		this.inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
 	}
 
-	public List<SheetInfo<T>> getInfo() {
-		return info;
+	public List<SheetInfo<T>> getSheets() {
+		return sheets;
 	}
 
-	public void setInfo(List<SheetInfo<T>> info) {
-		this.info = info;
+	public void setSheets(List<SheetInfo<T>> sheets) {
+		this.sheets = sheets;
 	}
 
 	public ByteArrayOutputStream getByteArrayOutputStream() {

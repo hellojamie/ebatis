@@ -3,6 +3,7 @@ package com.mshuoke.ebatis.test;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Test;
@@ -15,7 +16,9 @@ import com.mshuoke.ebatis.pojo.FiledTest;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 
 public class InitTest {
+	
 
+	
 	@Test
 	public void getTest(){
 		
@@ -34,17 +37,17 @@ public class InitTest {
 		ActionContext<FiledTest> act = init.start();
 		// end==============================================================================
 		long a2 = System.currentTimeMillis() - a1;
-		System.out.println("耗时（s）：" + a2 / 1000);
-		System.out.println("耗时（ms）：" + a2);
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			String string = mapper.writeValueAsString(act);
 			System.out.println(string);	
-			List<SheetInfo<FiledTest>> info = act.getInfo();
+			System.out.println(act.getSheets().get(0).getCorrectLine());
+			List<SheetInfo<FiledTest>> info = act.getSheets();
 			List<FiledTest> info2 = info.get(0).getInfo();
 			//System.out.println(mapper.writeValueAsString(info2));
-			
+			System.out.println("耗时（s）：" + a2 / 1000);
+			System.out.println("耗时（ms）：" + a2);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

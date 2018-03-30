@@ -16,7 +16,7 @@ public class FiledTest {
 	@Mapping(key = "姓名")
 	private String name;
 	
-	@Mapping(key = "手机号")
+	@Mapping(key = "手机号", rex = "^[0-9]{11}$")
 	private String phone;
 	
 	@Mapping(key = "年龄")
