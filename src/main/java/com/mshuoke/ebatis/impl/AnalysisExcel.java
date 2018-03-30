@@ -59,7 +59,6 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				wb = new XSSFWorkbook(inputStream);
 				break;
 			}
-			System.out.println("POI解析完毕");
 		}catch(IOException e){
 			e.printStackTrace();
 			rollback(act);

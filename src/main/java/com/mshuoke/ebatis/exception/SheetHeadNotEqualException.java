@@ -8,6 +8,11 @@ package com.mshuoke.ebatis.exception;
  */
 public class SheetHeadNotEqualException extends Exception {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public SheetHeadNotEqualException(){
 		super();
 	}

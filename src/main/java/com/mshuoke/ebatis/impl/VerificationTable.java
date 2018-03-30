@@ -26,8 +26,7 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 		// 获取文件格式是否正确，文件大小是否超量
 		FileType type = null;
 		ByteArrayInputStream inputStream = null;
-		byte[] buffer;
-		int len;
+
 		
 		try {
 			type = CheckFileType.getType(act.getInputStream());

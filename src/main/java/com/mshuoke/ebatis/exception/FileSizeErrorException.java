@@ -6,6 +6,11 @@ package com.mshuoke.ebatis.exception;
  *
  */
 public class FileSizeErrorException extends Exception {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public FileSizeErrorException(){
 		super();
 	}
