@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mshuoke.ebatis.impl.Init;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.FiledTest;
-import com.mshuoke.ebatis.pojo.FiledTest2;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 
 public class InitTest {
@@ -28,7 +27,7 @@ public class InitTest {
 		// act.setObjects(new FiledTest());
 		
 		try {
-			inputStream = new FileInputStream("正式模板.xlsx");
+			inputStream = new FileInputStream("000.xlsx");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -36,8 +35,8 @@ public class InitTest {
 		
 		long a1 = System.currentTimeMillis();
 		// start============================================================================
-		Init<FiledTest2> init = new Init<FiledTest2>(inputStream, new FiledTest2());
-		ActionContext<FiledTest2> act = init.start();
+		Init<FiledTest> init = new Init<FiledTest>(inputStream, new FiledTest());
+		ActionContext<FiledTest> act = init.start();
 		// end==============================================================================
 		long a2 = System.currentTimeMillis() - a1;
 		System.out.println(a2 / 1000);
@@ -53,8 +52,8 @@ public class InitTest {
 		try {
 			String string = mapper.writeValueAsString(act);
 			System.out.println(string);	
-			List<SheetInfo<FiledTest2>> info = act.getInfo();
-			List<FiledTest2> info2 = info.get(0).getInfo();
+			List<SheetInfo<FiledTest>> info = act.getInfo();
+			List<FiledTest> info2 = info.get(0).getInfo();
 			//System.out.println(mapper.writeValueAsString(info2));
 			
 		} catch (JsonProcessingException e) {
