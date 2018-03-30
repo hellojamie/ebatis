@@ -3,7 +3,6 @@ package com.mshuoke.ebatis.impl;
 import java.io.InputStream;
 
 import com.mshuoke.ebatis.pojo.ActionContext;
-import com.mshuoke.ebatis.pojo.FiledTest;
 
 /**
  * 
