@@ -7,16 +7,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mshuoke.ebatis.emnu.FileType;
 
 public class ActionContext<T> {
 	
-	@JsonIgnore
+	
 	private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();;
 	
 	// 文件流
-	@JsonIgnore
+	
 	private InputStream inputStream;
 	
 	// 表格内数据
@@ -31,7 +30,7 @@ public class ActionContext<T> {
 	// 文件大小
 	private Integer fileSizeByte;
 	
-	@JsonIgnore
+	
 	private T objects;
 	
 	// 是否完成链式操作，默认false
