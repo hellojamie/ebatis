@@ -26,7 +26,6 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 		// 获取文件格式是否正确，文件大小是否超量
 		FileType type = null;
 		ByteArrayInputStream inputStream = null;
-
 		
 		try {
 			type = CheckFileType.getType(act.getInputStream());
@@ -38,11 +37,12 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			// 设置文件类型
 			act.setFileType(type);
 			
-			// 判断文件大小
+			// 判断文件大小 大于10M切为xlsx的，使用sax处理
 			inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
 			int available = inputStream.available();
-			if(available > 31457280){
-				throw new FileSizeErrorException("The file size error max: 31457280 you file size: " + available);
+			if(available > 1 && type == FileType.XLSX){
+				act.setUseSax(false);
+				// throw new FileSizeErrorException("The file size error max: 31457280 you file size: " + available);
 			}
 			act.setFileSizeByte(available);
 			
@@ -55,10 +55,7 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 		} catch (FileTypeErrorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (FileSizeErrorException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}finally{
+		} finally{
 			
 				try {
 					if(inputStream != null) {

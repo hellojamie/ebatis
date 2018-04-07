@@ -25,7 +25,7 @@ public class ActionContext<T> {
 	// 文件类型
 	private FileType fileType;
 	
-	// 有效sheet数量
+	// sheet数量
 	private Integer SheetSize;
 	
 	// 文件大小
@@ -34,10 +34,20 @@ public class ActionContext<T> {
 	@JsonIgnore
 	private T objects;
 	
+	private boolean useSax = false;
+	
 	// 是否完成链式操作，默认false
 	private boolean result = false;
 
-	public boolean isResult() {
+	public boolean getUseSax() {
+		return useSax;
+	}
+
+	public void setUseSax(boolean useSax) {
+		this.useSax = useSax;
+	}
+
+	public boolean getResult() {
 		return result;
 	}
 
@@ -105,6 +115,13 @@ public class ActionContext<T> {
 
 	public void setSheets(List<SheetInfo<T>> sheets) {
 		this.sheets = sheets;
+	}
+	
+	public void addSheets(SheetInfo<T> sheets) {
+		if(this.sheets != null) {
+			this.sheets.add(sheets);
+		}
+		
 	}
 
 	public ByteArrayOutputStream getByteArrayOutputStream() {
