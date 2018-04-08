@@ -11,11 +11,11 @@ import com.mshuoke.ebatis.emnu.FileType;
 
 public class ActionContext<T> {
 	
-	
-	private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();;
+
+	private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 	
 	// 文件流
-	
+
 	private InputStream inputStream;
 	
 	// 表格内数据
@@ -24,19 +24,39 @@ public class ActionContext<T> {
 	// 文件类型
 	private FileType fileType;
 	
-	// 有效sheet数量
+	// sheet数量
 	private Integer SheetSize;
 	
 	// 文件大小
 	private Integer fileSizeByte;
 	
-	
 	private T objects;
+	
+	private boolean useSax = false;
+	
+	// 是否去除重复，默认否
+	private boolean distinct = false;
 	
 	// 是否完成链式操作，默认false
 	private boolean result = false;
 
-	public boolean isResult() {
+	public boolean getDistinct() {
+		return distinct;
+	}
+
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
+	}
+
+	public boolean getUseSax() {
+		return useSax;
+	}
+
+	public void setUseSax(boolean useSax) {
+		this.useSax = useSax;
+	}
+
+	public boolean getResult() {
 		return result;
 	}
 
@@ -104,6 +124,13 @@ public class ActionContext<T> {
 
 	public void setSheets(List<SheetInfo<T>> sheets) {
 		this.sheets = sheets;
+	}
+	
+	public void addSheets(SheetInfo<T> sheets) {
+		if(this.sheets != null) {
+			this.sheets.add(sheets);
+		}
+		
 	}
 
 	public ByteArrayOutputStream getByteArrayOutputStream() {
