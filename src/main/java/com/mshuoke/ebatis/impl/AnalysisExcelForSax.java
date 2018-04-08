@@ -3,8 +3,9 @@ package com.mshuoke.ebatis.impl;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -24,7 +25,6 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.mshuoke.ebatis.api.DataHandleAction;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
-import com.mshuoke.ebatis.test.People2;
 import com.mshuoke.ebatis.util.ReflexObject;
 
 /**
@@ -109,6 +109,10 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 			sheet.close();
 			// 在解析完毕一个sheet后，设置列的数量，数量为头的列数
 			sheetInfo.setColumn(reflexVO.getListHeader().size());
+			// 设置错误、空白、重复数量
+			sheetInfo.setBlankLineSize(sheetInfo.getBlankLine().size());
+			sheetInfo.setErrorLineSize(sheetInfo.getErrorLine().size());
+			sheetInfo.setRepeatLineSize(sheetInfo.getRepeatLine().size());
 			// 在解析完毕后，将sheetInfo加入到act中
 			reflexVO.getAct().addSheets(reflexVO.getSheetInfo());
 			// 下一个sheet操作
@@ -147,13 +151,24 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		private ActionContext<T> act;
 		// sheetInfo
 		private SheetInfo<T> sheetInfo;
+		// 去重使用
+		private Set<T> distinctSet;
 		
 		public ReflexVO() {
 			this.listHeader = new ArrayList<String>();
 			this.rowInfo = new ArrayList<String>();
 			this.lineNum = 0;
+			this.distinctSet = new HashSet<T>();
 		}
 		
+		public Set<T> getDistinctSet() {
+			return distinctSet;
+		}
+
+		public void setDistinctSet(Set<T> distinctSet) {
+			this.distinctSet = distinctSet;
+		}
+
 		public SheetInfo<T> getSheetInfo() {
 			return sheetInfo;
 		}
@@ -195,6 +210,8 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		private String lastContents;
 		private boolean nextIsString;
 		private ReflexVO<T> reflexVO;
+		// 是否去重
+		private boolean distinct;
 		// 列索引
 		private Integer index;
 
@@ -204,6 +221,8 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 			this.sst = sst;
 			// 将反射信息对象加入
 			this.reflexVO = reflexVO;
+			// 赋值是否去重
+			this.distinct = reflexVO.getAct().getDistinct();
 		}
 		
 		short formatIndex;
@@ -353,9 +372,26 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				
 				// 如果反射中未出现问题，保留信息进列表
 				if(obj != null) {
-					reflexVO.getSheetInfo().getInfo().add(obj);
-					Integer correctLine = reflexVO.getSheetInfo().getCorrectLine() + 1;
-					reflexVO.getSheetInfo().setCorrectLine(correctLine);
+					boolean flag = true;
+					// 在此处去重,如果为true
+					if(distinct) {
+						System.out.println("去重中" + (reflexVO.getLineNum() - 1));
+						boolean add = reflexVO.getDistinctSet().add(obj);
+						// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
+						if(!add) {
+							// 将重复的记录下来,设置行数
+							reflexVO.getSheetInfo().addRepeatLine(reflexVO.getLineNum() - 1);
+							// 重复不执行后续操作
+							flag = false;
+						}
+					}
+					
+					if(flag) {
+						reflexVO.getSheetInfo().getInfo().add(obj);
+						Integer correctLine = reflexVO.getSheetInfo().getCorrectLine() + 1;
+						reflexVO.getSheetInfo().setCorrectLine(correctLine);
+					}
+					
 				}
 				
 				if(obj == null) {

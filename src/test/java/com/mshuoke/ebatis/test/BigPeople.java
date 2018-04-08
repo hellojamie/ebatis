@@ -77,5 +77,21 @@ public class BigPeople {
 		this.sex = sex;
 	}
 	
+	@Override
+	public int hashCode() {
+		String substring = this.phone.substring(5, 11);
+		int parseInt = Integer.parseInt(substring);
+		return parseInt;
+	}
 	
+	@Override
+	public boolean equals(Object people) {
+		
+		BigPeople p = (BigPeople)people;
+		if(this.phone.equals(p.getPhone())) {
+			return true;
+		}
+		
+		return false;
+	}
 }

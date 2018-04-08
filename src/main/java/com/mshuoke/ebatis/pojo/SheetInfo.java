@@ -13,6 +13,12 @@ public class SheetInfo<T> {
 	
 	private Integer correctLine;// 成功解析的数据行数
 	
+	private Integer blankLineSize;	// 空行数量
+	
+	private Integer errorLineSize;	// 错误行数量
+	
+	private Integer repeatLineSize;	// 重复行数量
+	
 	// private List<Map<String,String>> info;	// 行信息
 	private List<T> info;
 	
@@ -20,15 +26,62 @@ public class SheetInfo<T> {
 	
 	private List<Integer> errorLine;	// 有问题的行号
 	
+	private List<Integer> repeatLine;	// 重复的行号
+	
 	public SheetInfo(){
 		this.line = 0;
 		this.column = 0;
 		this.correctLine = 0;
+		this.blankLineSize = 0;
+		this.errorLineSize = 0;
+		this.repeatLineSize = 0;
 		this.info = new ArrayList<T>();
 		this.blankLine = new ArrayList<Integer>();
 		this.errorLine = new ArrayList<Integer>();
+		this.repeatLine = new ArrayList<Integer>();
 	}
 	
+	
+	public Integer getBlankLineSize() {
+		return blankLineSize;
+	}
+
+
+	public void setBlankLineSize(Integer blankLineSize) {
+		this.blankLineSize = blankLineSize;
+	}
+
+
+	public Integer getErrorLineSize() {
+		return errorLineSize;
+	}
+
+
+	public void setErrorLineSize(Integer errorLineSize) {
+		this.errorLineSize = errorLineSize;
+	}
+
+
+	public Integer getRepeatLineSize() {
+		return repeatLineSize;
+	}
+
+
+	public void setRepeatLineSize(Integer repeatLineSize) {
+		this.repeatLineSize = repeatLineSize;
+	}
+
+
+	public List<Integer> getRepeatLine() {
+		return repeatLine;
+	}
+
+
+	public void addRepeatLine(Integer repeatLine) {
+		this.repeatLine.add(repeatLine);
+	}
+
+
 	public List<Integer> getErrorLine() {
 		return errorLine;
 	}

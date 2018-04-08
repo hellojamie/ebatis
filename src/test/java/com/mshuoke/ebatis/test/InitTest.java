@@ -32,7 +32,7 @@ public class InitTest {
 		
 		long a1 = System.currentTimeMillis();
 		// start============================================================================
-		Init<People> init = new Init<People>(inputStream, new People());
+		Init<People> init = new Init<People>(inputStream, new People(),true);
 		ActionContext<People> act = init.start();
 		// end==============================================================================
 		long a2 = System.currentTimeMillis() - a1;
@@ -59,22 +59,27 @@ public class InitTest {
 		InputStream inputStream = null;
 		
 		try {
-			inputStream = new FileInputStream("000.xlsx");
+			inputStream = new FileInputStream("moushi20180321.xlsx");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		long a1 = System.currentTimeMillis();
-		Init<People2> init = new Init<People2>(inputStream, new People2());
-		ActionContext<People2> act = init.start();
+		Init<BigPeople> init = new Init<BigPeople>(inputStream, new BigPeople(), true);
+		ActionContext<BigPeople> act = init.start();
 		long a2 = System.currentTimeMillis() - a1;
 		
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			String string = mapper.writeValueAsString(act);
-			System.out.println(string);
-			System.out.println(act.getSheets().get(0).getInfo().size());
+			//String string = mapper.writeValueAsString(act);
+			//System.out.println(string);
+			//System.out.println(act.getSheets().get(0).getInfo().size());
+			System.out.println("正确行数：" + act.getSheets().get(0).getCorrectLine());
+			System.out.println("空白行数：" + act.getSheets().get(0).getBlankLineSize());
+			System.out.println("错误行数：" + act.getSheets().get(0).getErrorLineSize());
+			System.out.println("重复行数：" + act.getSheets().get(0).getRepeatLineSize());
+			System.out.println("重复行数具体：" + act.getSheets().get(0).getRepeatLine().get(0));
 			System.out.println("耗时（s）：" + a2 / 1000);
 			System.out.println("耗时（ms）：" + a2);
 		} catch (Exception e) {

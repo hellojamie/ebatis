@@ -41,7 +41,7 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
 			int available = inputStream.available();
 			if(available > 1 && type == FileType.XLSX){
-				act.setUseSax(false);
+				act.setUseSax(true);
 				// throw new FileSizeErrorException("The file size error max: 31457280 you file size: " + available);
 			}
 			act.setFileSizeByte(available);

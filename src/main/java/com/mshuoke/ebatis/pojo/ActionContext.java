@@ -36,8 +36,19 @@ public class ActionContext<T> {
 	
 	private boolean useSax = false;
 	
+	// 是否去除重复，默认否
+	private boolean distinct = false;
+	
 	// 是否完成链式操作，默认false
 	private boolean result = false;
+
+	public boolean getDistinct() {
+		return distinct;
+	}
+
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
+	}
 
 	public boolean getUseSax() {
 		return useSax;

@@ -7,7 +7,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -18,7 +20,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
-import com.mshuoke.ebatis.exception.SheetHeadNotEqualException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 import com.mshuoke.ebatis.util.ReflexObject;
@@ -51,6 +52,8 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		
 		List<SheetInfo<T>> excelInfo = act.getSheets();
 		
+		boolean distinct = act.getDistinct();
+		
 		try{
 			switch(act.getFileType()){
 			case XLS:
@@ -64,6 +67,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			e.printStackTrace();
 			rollback(act);
 		}
+		
 		// sheet数量
 		int numberOfSheets = wb.getNumberOfSheets();
 		act.setSheetSize(numberOfSheets);
@@ -109,7 +113,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		for(int i=0; i<numberOfSheets; i++){
 			Sheet sheet = wb.getSheetAt(i);
 			SheetInfo<T> sheetInfo = new SheetInfo<T>();
-			List<T> analysisSheet = analysisSheet(sheet,act.getObjects(),sheetInfo);
+			List<T> analysisSheet = analysisSheet(sheet,act.getObjects(),sheetInfo,distinct);
 			if(analysisSheet == null) {
 				continue;
 			}
@@ -118,6 +122,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			sheetInfo.setLine(sheet.getLastRowNum());
 			sheetInfo.setColumn(firstSheetHeadNum);
 			sheetInfo.setCorrectLine(analysisSheet.size());
+			// 设置错误、空白、重复数量
+			sheetInfo.setBlankLineSize(sheetInfo.getBlankLine().size());
+			sheetInfo.setErrorLineSize(sheetInfo.getErrorLine().size());
+			sheetInfo.setRepeatLineSize(sheetInfo.getRepeatLine().size());
+			// 添加
 			excelInfo.add(sheetInfo);
 		}
 		
@@ -149,18 +158,26 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @return List<String>
 	 */
 	@SuppressWarnings("deprecation")
-	List<T> analysisSheet(Sheet sheet,Object object,SheetInfo<T> sheetInfo){
+	List<T> analysisSheet(Sheet sheet,Object object,SheetInfo<T> sheetInfo, boolean distinct){
 		// 信息数据
 		int lastRowNum = sheet.getLastRowNum(); // 一共几行
 		
 		List<T> sheetList = new ArrayList<T>();
+		
 		// 获取头信息
 		Row row = sheet.getRow(0);
+		
 		if(row == null) {
+			
 			return null;
+			
 		}
+		
 		int cellNum = row.getLastCellNum(); // 头数量
+		
 		List<String> headStr = new ArrayList<String>();	// 头内容
+		
+		Set<T> distinctSet = new HashSet<T>();	// 去重set
 		
 		for(int i=0; i<cellNum; i++){
 			Cell cell = row.getCell(i);
@@ -241,7 +258,23 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				continue;
 			}
 			
-			sheetList.add(t);
+			boolean flag = true;
+			// 在此去重, 如果为true表示去重
+			if(distinct) {
+				boolean add = distinctSet.add(t);
+				// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
+				if(!add) {
+					// 将重复的记录下来,设置行数
+					sheetInfo.addRepeatLine(i);
+					// 重复不执行后续操作
+					flag = false;
+				}
+			}
+			
+			if(flag) {
+				sheetList.add(t);
+			}
+			
 		}
 		
 		return sheetList;

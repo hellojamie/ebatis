@@ -20,12 +20,13 @@ public class Init<T> {
 	
 	private VerificationTable<T> ver;
 	
-	public Init(InputStream inp, T t) {
+	public Init(InputStream inp, T t, boolean distinct) {
 		super();
 		this.inp = inp;
 		this.t = t;
 		act.setInputStream(inp);
 		act.setObjects(t);
+		act.setDistinct(distinct);
 	}
 	
 	public ActionContext<T> start(){

@@ -79,5 +79,19 @@ public class People2 {
 		this.age = age;
 	}
 	
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 	
+	@Override
+	public boolean equals(Object people) {
+		
+		People2 p = (People2)people;
+		if(this.phone.equals(p.getPhone())) {
+			return true;
+		}
+		
+		return false;
+	}
 }
