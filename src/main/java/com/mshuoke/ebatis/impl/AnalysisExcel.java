@@ -20,6 +20,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
+import com.mshuoke.ebatis.exception.NoHeaderException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 import com.mshuoke.ebatis.util.ReflexObject;
@@ -79,8 +80,15 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				Sheet sheet = wb.getSheetAt(n);
 				// 获取第一行
 				Row row = sheet.getRow(0);
-				if(row == null)
-					continue;
+				if(row == null) {
+					try {
+						throw new NoHeaderException("No table head!");
+					} catch (NoHeaderException e) {
+						e.printStackTrace();
+						rollback(act);
+						return;
+					}
+				}
 				int cellNum = row.getLastCellNum();
 				for(int i=0; i<cellNum; i++){
 					Cell cell = row.getCell(i);

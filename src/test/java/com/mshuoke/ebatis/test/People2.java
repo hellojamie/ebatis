@@ -10,7 +10,7 @@ public class People2 {
 	
 	@Mapping(key = "姓名")
 	private String name;
-	@Mapping(key = "手机号", rex="^[0-9]{11}$", delNull=true)
+	@Mapping(key = "手机号", rex="^[0-9]{11}$")
 	private String phone;
 	@Mapping(key = "点数")
 	private Double point;
@@ -88,10 +88,21 @@ public class People2 {
 	public boolean equals(Object people) {
 		
 		People2 p = (People2)people;
+		if(this.phone == null) {
+			return true;
+		}
 		if(this.phone.equals(p.getPhone())) {
 			return true;
 		}
 		
 		return false;
 	}
+
+	@Override
+	public String toString() {
+		return "People2 [name=" + name + ", phone=" + phone + ", point=" + point + ", date=" + date + ", age=" + age
+				+ ", line=" + line + ", type=" + type + "]";
+	}
+	
+	
 }

@@ -23,6 +23,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
+import com.mshuoke.ebatis.exception.NoHeaderException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 import com.mshuoke.ebatis.util.ReflexObject;
@@ -214,6 +215,8 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		private boolean distinct;
 		// 列索引
 		private Integer index;
+		// 是否第一行
+		private boolean isFirstLine = true;
 
 		ReflexObject<T> reflexObject = new ReflexObject<T>();
 		
@@ -230,7 +233,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		String cellStyleStr;
 		
 		public void startElement(String uri, String localName, String name,
-				Attributes attributes) throws SAXException {		
+				Attributes attributes) throws SAXException{		
 			//System.out.println(i + name + ":开始");
 			// c => cell
 			
@@ -253,8 +256,12 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				
 				// 如果为表头初始化头列表，否则初始化内容列表，内容列表初始化会替代上次使用的，为全新的
 				if(thisLine == 1) {
+					isFirstLine = false;
 					reflexVO.setListHeader(new ArrayList<String>());
 				}else {
+					if(isFirstLine) {
+						throw new SAXException("No table head！");
+					}
 					reflexVO.setRowInfo(new ArrayList<String>());
 				}
 			}
