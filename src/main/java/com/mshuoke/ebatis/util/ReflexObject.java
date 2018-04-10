@@ -244,6 +244,8 @@ public class ReflexObject<T> {
 	 */
 	private void screening(Class<?> class1, Object object, String methodName, String fieldType, String fieldValue) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
 		
+		Double parseToDouble = null;
+		
 		switch(fieldType){
 		case "class java.util.Date":
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -259,9 +261,16 @@ public class ReflexObject<T> {
 			break;
 		case "class java.lang.Integer":
 			Integer parseInt = null;
-			try{
+			
+			parseToDouble = parseToDouble(fieldValue);
+			if(parseToDouble != null) {
+				double doubleVal = parseToDouble;
+				parseInt = (int)doubleVal;
+			}
+			try {
 				parseInt = Integer.parseInt(fieldValue);
-			}catch(NumberFormatException e){}
+			}catch(NumberFormatException e) {}
+			
 			class1.getMethod(methodName, Integer.class).invoke(object, parseInt);
 			break;
 		case "class java.lang.String":
@@ -272,6 +281,13 @@ public class ReflexObject<T> {
 			break;
 		case "class java.lang.Long":
 			Long parseLong = null;
+			
+			parseToDouble = parseToDouble(fieldValue);
+			if(parseToDouble != null) {
+				double doubleVal = parseToDouble;
+				parseLong = (long)doubleVal;
+			}
+			
 			try{
 				parseLong = Long.parseLong(fieldValue);
 			}catch(NumberFormatException e){}
@@ -286,6 +302,13 @@ public class ReflexObject<T> {
 			break;
 		case "class java.lang.Short":
 			Short parseShort = null;
+			
+			parseToDouble = parseToDouble(fieldValue);
+			if(parseToDouble != null) {
+				double doubleVal = parseToDouble;
+				parseShort = (short)doubleVal;
+			}
+			
 			try{
 				parseShort = Short.parseShort(fieldValue);
 			}catch(NumberFormatException e){}
@@ -299,5 +322,21 @@ public class ReflexObject<T> {
 			class1.getMethod(methodName, Boolean.class).invoke(object, parseBoolean);
 			break;
 		}
+	}
+	
+	/**
+	 * 转为Double类型
+	 * @return
+	 */
+	public Double parseToDouble(String fieldValue) {
+		Double parseDouble = null;
+		try{
+			if(fieldValue != null && fieldValue.contains(".")) {
+				parseDouble = Double.parseDouble(fieldValue);
+			}
+			
+		}catch(NumberFormatException e){}
+		
+		return parseDouble;
 	}
 }

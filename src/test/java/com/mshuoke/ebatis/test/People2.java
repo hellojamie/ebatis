@@ -8,15 +8,15 @@ import com.mshuoke.ebatis.annotation.MappingSheetName;
 
 public class People2 {
 	
-	@Mapping(key = "姓名")
+	@Mapping(key = "姓名1")
 	private String name;
-	@Mapping(key = "手机号", rex="^[0-9]{11}$")
+	@Mapping(key = "手机号1", rex="^[0-9]{11}$")
 	private String phone;
-	@Mapping(key = "点数")
+	@Mapping(key = "点数1")
 	private Double point;
-	@Mapping(key = "日期")
+	@Mapping(key = "日期1")
 	private Date date;
-	@Mapping(key = "年龄")
+	@Mapping(key = "年龄1")
 	private Integer age;
 	@LineNumber
 	private Integer line;

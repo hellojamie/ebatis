@@ -311,7 +311,8 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				cellLi.add(cell.getBooleanCellValue() + "");
 				break;
 			case Cell.CELL_TYPE_FORMULA:
-				cellLi.add(cell.getCellFormula());
+				cellLi.add(String.valueOf(cell.getNumericCellValue()));
+				// cellLi.add(cell.getCellFormula());
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
 				if(HSSFDateUtil.isCellDateFormatted(cell)){
