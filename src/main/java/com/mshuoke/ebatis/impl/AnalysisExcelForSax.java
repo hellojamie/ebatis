@@ -382,7 +382,6 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					boolean flag = true;
 					// 在此处去重,如果为true
 					if(distinct) {
-						System.out.println("去重中" + (reflexVO.getLineNum() - 1));
 						boolean add = reflexVO.getDistinctSet().add(obj);
 						// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
 						if(!add) {
