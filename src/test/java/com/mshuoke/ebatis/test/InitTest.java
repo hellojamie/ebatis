@@ -1,8 +1,10 @@
 package com.mshuoke.ebatis.test;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.junit.Test;
@@ -14,10 +16,7 @@ import com.mshuoke.ebatis.pojo.ActionContext;
 
 public class InitTest {
 	
-
-
-	
-	@Test
+	//@Test
 	public void test2() {
 		InputStream inputStream = null;
 		
@@ -110,9 +109,33 @@ public class InitTest {
 			
 		}
 		
-		CreateExcel.create(list);
+		//CreateExcel.create(list);
 	}
 	
-	
+	@Test
+	public void createExcelTest() {
+		
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream("create.xlsx");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		Init<CreateExcelPOJO> init = new Init<CreateExcelPOJO>(inputStream, new CreateExcelPOJO(), true);
+		ActionContext<CreateExcelPOJO> act = init.start();
+		
+		List<CreateExcelPOJO> list = act.getSheets().get(0).getInfo();
+		System.out.println(list);
+		
+		CreateExcel<CreateExcelPOJO> c = new CreateExcel<CreateExcelPOJO>();
+		try {
+			c.create(list, "这是一个sheet名", new File("生成excel.xlsx"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	
 }

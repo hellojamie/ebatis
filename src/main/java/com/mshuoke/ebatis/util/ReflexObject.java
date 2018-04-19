@@ -110,20 +110,6 @@ public class ReflexObject<T> {
 		
 	}
 	
-	/**
-	 * 首字母转为大写
-	 * @param str
-	 * @return
-	 */
-	public String upperCase(String str) {  
-	    char[] ch = str.toCharArray();  
-	    if (ch[0] >= 'a' && ch[0] <= 'z') {  
-	        ch[0] = (char) (ch[0] - 32);  
-	    }  
-	    return new String(ch);  
-	} 
-	
-	
 	/*改版测试方法如下*/
 	
 	/**
@@ -148,7 +134,7 @@ public class ReflexObject<T> {
 		
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		
@@ -198,7 +184,7 @@ public class ReflexObject<T> {
 
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		
@@ -223,7 +209,7 @@ public class ReflexObject<T> {
 
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		

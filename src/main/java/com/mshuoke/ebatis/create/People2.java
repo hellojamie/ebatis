@@ -1,4 +1,4 @@
-package com.mshuoke.ebatis.test;
+package com.mshuoke.ebatis.create;
 
 import java.util.Date;
 
