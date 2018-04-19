@@ -126,7 +126,6 @@ public class InitTest {
 		ActionContext<CreateExcelPOJO> act = init.start();
 		
 		List<CreateExcelPOJO> list = act.getSheets().get(0).getInfo();
-		System.out.println(list);
 		
 		CreateExcel<CreateExcelPOJO> c = new CreateExcel<CreateExcelPOJO>();
 		try {

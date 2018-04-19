@@ -3,9 +3,7 @@ package com.mshuoke.ebatis.create;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -32,13 +30,7 @@ import com.mshuoke.ebatis.util.ConvertUtil;
 
 public class CreateExcel<T> {
 	
-	public static void main(String[] args) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException {
-		//CreateExcel.create(null);
-	}
-	
-	public void create(List<T> list, String sheetName, File file) throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, InstantiationException, NoEnableExcelMakerException {
-		
-		//sorts(list);
+	public void create(List<T> list, String sheetName, File file) throws NoEnableExcelMakerException {
 		
 		// 获取一个实体用于获取对象拥有哪些注解
 		Class<? extends Object> class1 = list.get(0).getClass();
@@ -52,6 +44,7 @@ public class CreateExcel<T> {
 		Field[] fields;
 		// 用于存放属性上注解的信息
 		Map<Integer,String[]> map = new HashMap<Integer,String[]>();
+		// 遍历使用
 		Set<Integer> keySet;
 		
 		if(enableExcelMaker == null) {
@@ -78,16 +71,12 @@ public class CreateExcel<T> {
 			String name = excelField.name();
 			// 要出现的为位置，0 -> ？
 			int position = excelField.position();
-			// 是否合并 紧邻的相同内容
-			String merge = excelField.merge()?"true":"false";
-			// 如何排序
-			String sort = excelField.sort().toString();
 			// 列宽
 			String width = String.valueOf(excelField.width());
 			// 属性名称
 			String fieldName = x.getName();
 			// 将这些需要的属性存放{生成的列名，属性名，排序方式，是否合并}
-			String[] infos = new String[]{name, fieldName, width, sort, merge};
+			String[] infos = new String[]{name, fieldName, width};
 			map.put(position, infos);
 		}
 
@@ -155,32 +144,9 @@ public class CreateExcel<T> {
 	        createCell.setCellStyle(getStyleTitle(info));
 		}
 		
-		String lastName = null;
-		int lastIndex = -1;
 		for(int i = 0; i < list.size(); i++) {
 			// 循环集合获取对象，准备生成cell
 			T t = list.get(i);
-			// ----
-			/*
-			String name = people2.getName();
-			if(lastName == null && lastIndex == -1) {
-				lastIndex = i+2;
-			}
-			if(!name.equals(lastName) && lastName != null) {
-				CellRangeAddress x =new CellRangeAddress(lastIndex, i+1, 0, 0); // 起始行, 终止行, 起始列, 终止列  
-		        sheet.addMergedRegion(x);
-		        lastIndex = i+2;
-			}
-			lastName = name;
-			
-			if(i == ps.size() - 1) {
-				if(lastName.equals(name)) {
-					CellRangeAddress x =new CellRangeAddress(lastIndex, i+2, 0, 0); // 起始行, 终止行, 起始列, 终止列  
-			        sheet.addMergedRegion(x);
-				}
-			}
-			*/
-			// ----
 			// 获取反射对象
 			Class<? extends Object> class2 = t.getClass();
 			// 创建行
@@ -188,7 +154,12 @@ public class CreateExcel<T> {
 			for(Integer x : keySet) {
 				String string = map.get(x)[1];
 				String method = "get" + ConvertUtil.upperCase(string);
-				Object invoke = class2.getMethod(method).invoke(t);
+				Object invoke = null;
+				try {
+					invoke = class2.getMethod(method).invoke(t);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				if(invoke == null) {
 					continue;
 				}
@@ -237,54 +208,16 @@ public class CreateExcel<T> {
 			info.write(file);
 			info.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 	}
-	 
 	
-	public void sorts(List<T> list) {
-		Collections.sort(list, (a,b)->{
-			Class<? extends Object> class1 = a.getClass();
-			Class<? extends Object> class2 = b.getClass();
-			Object invoke1;
-			String name1 = null;
-			Object invoke2;
-			String name2 = null;
-			String phone1 = null;
-			String phone2 = null;
-			try {
-				invoke1 = class1.getMethod("getName").invoke(a);
-				name1 = (String)invoke1;
-				invoke2 = class2.getMethod("getName").invoke(b);
-				name2 = (String)invoke2;
-				// 手机
-				invoke1 = class1.getMethod("getPhone").invoke(a);
-				phone1 = (String)invoke1;
-				invoke2 = class2.getMethod("getPhone").invoke(b);
-				phone2 = (String)invoke2;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			
-			int compareTo1 = name1.compareTo(name2);
-			if(compareTo1 == 0) {
-				if(phone1 == null) {
-					return -1;
-				}else if(phone2 == null) {
-					return 1;
-				}else if(phone1 == null && phone2 == null) {
-					return 0;
-				}
-				return phone1.compareTo(phone2);
-			}
-			
-			return compareTo1;
-			
-		});
-	}
-	
+	/**
+	 * 获取大标题样式
+	 * @param info
+	 * @return
+	 */
 	public HSSFCellStyle getStyleTitle(HSSFWorkbook info) {
 		HSSFCellStyle style = getStyle(info);
 		HSSFFont crsFont = info.createFont();
@@ -294,6 +227,11 @@ public class CreateExcel<T> {
 		return style;
 	}
 	
+	/**
+	 * 获取表头样式
+	 * @param info
+	 * @return
+	 */
 	public HSSFCellStyle getStyleBold(HSSFWorkbook info) {
 		HSSFCellStyle style = getStyle(info);
 		HSSFFont crsFont = info.createFont();
@@ -302,6 +240,11 @@ public class CreateExcel<T> {
 		return style;
 	}
 	
+	/**
+	 * 获取普通cell样式（居中，边框）
+	 * @param info
+	 * @return
+	 */
 	public HSSFCellStyle getStyle(HSSFWorkbook info) {
 		// 头样式
 		HSSFCellStyle crs = info.createCellStyle();
@@ -309,7 +252,6 @@ public class CreateExcel<T> {
 		crs.setBorderLeft(BorderStyle.THIN);//左边框    
 		crs.setBorderTop(BorderStyle.THIN);//上边框    
 		crs.setBorderRight(BorderStyle.THIN);//右边框 
-		crs.setFillForegroundColor((short) 13);// 设置背景色
 		crs.setAlignment(HorizontalAlignment.CENTER); // 居中
 		crs.setVerticalAlignment(VerticalAlignment.CENTER); // 居中
 		return crs;

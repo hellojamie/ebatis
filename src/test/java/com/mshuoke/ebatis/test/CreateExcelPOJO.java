@@ -19,24 +19,13 @@ public class CreateExcelPOJO {
 	@Mapping(key = "手机号", rex="^[0-9]{11}$")
 	private String phone;
 
-	@ExcelField(position = 4, name = "日期", width = 10)
+	@ExcelField(position = 3, name = "日期", width = 10)
 	@Mapping(key = "日期")
 	private Date date;
 	
 	@ExcelField(position = 2, name = "年龄", width = 6)
 	@Mapping(key = "年龄")
 	private Integer age;
-	
-	@ExcelField(position = 3, name = "类型", width = 4)
-	private String type;
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
 
 	public String getName() {
 		return name;
