@@ -16,19 +16,19 @@ import com.mshuoke.ebatis.pojo.ActionContext;
 
 public class InitTest {
 	
-	//@Test
+	@Test
 	public void test2() {
 		InputStream inputStream = null;
 		
 		try {
-			inputStream = new FileInputStream("000.xlsx");
+			inputStream = new FileInputStream("空手机号.xlsx");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
 		long a1 = System.currentTimeMillis();
-		Init<People2> init = new Init<People2>(inputStream, new People2(), true);
+		Init<People2> init = new Init<People2>(inputStream, new People2(), false);
 		ActionContext<People2> act = init.start();
 		long a2 = System.currentTimeMillis() - a1;
 		
@@ -112,7 +112,11 @@ public class InitTest {
 		//CreateExcel.create(list);
 	}
 	
-	@Test
+	
+	
+	
+	
+	//@Test
 	public void createExcelTest() {
 		
 		InputStream inputStream = null;

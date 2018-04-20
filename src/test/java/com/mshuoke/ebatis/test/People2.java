@@ -15,17 +15,17 @@ import com.mshuoke.ebatis.annotation.MappingSheetName;
 public class People2 {
 	
 	@ExcelField(position = 0, name = "姓名")
-	@Mapping(key = "姓名1")
+	//@Mapping(key = "姓名1")
 	private String name;
 	@ExcelField(position = 1, name = "手机号")
-	@Mapping(key = "手机号1", rex="^[0-9]{11}$")
+	//@Mapping(key = "手机号1", rex="^[0-9]{11}$")
 	private String phone;
-	@Mapping(key = "点数1")
+	//@Mapping(key = "点数1")
 	private Double point;
-	@Mapping(key = "日期1")
-	private Date date;
+	@Mapping(key = "孩子生日")
+	private String date;
 	@ExcelField(position = 2, name = "年龄")
-	@Mapping(key = "年龄1")
+	//@Mapping(key = "年龄1")
 	private Integer age;
 	@LineNumber
 	private Integer line;
@@ -60,11 +60,11 @@ public class People2 {
 		return phone;
 	}
 
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 

@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -315,7 +316,8 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				// cellLi.add(cell.getCellFormula());
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				if(HSSFDateUtil.isCellDateFormatted(cell)){
+				short dataFormat = cell.getCellStyle().getDataFormat();
+				if(DateUtil.isCellDateFormatted(cell)){
 					Date date = cell.getDateCellValue();
 					if(date != null){
 						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -325,6 +327,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 						cellLi.add("1970-01-01");
 					}
 					break;
+				}else if(dataFormat == 58) {
+					Date javaDate = DateUtil.getJavaDate(cell.getNumericCellValue());
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM月dd日");
+					String string = simpleDateFormat.format(javaDate);
+					cellLi.add(string);
 				}
 				
 				DecimalFormat df = new DecimalFormat("#.######");

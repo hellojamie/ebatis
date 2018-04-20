@@ -285,8 +285,10 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		            formatString = style.getDataFormatString();
 		            
 		            // 如果格式中有ymd三种字母，表示为日期格式，将他们转换
-		            if (formatString.indexOf("y") != -1 && (formatString.indexOf("M") != -1 || formatString.indexOf("m") != -1) && formatString.indexOf("d") != -1 ) {
+		            if (formatIndex == 14 || formatIndex == 31 || formatIndex == 57) {
 		                formatString = "yyyy-MM-dd";
+		            }else if(formatIndex == 58){
+		            	formatString = "MM月dd日";
 		            }else {
 		            	formatString = null;
 		            }
