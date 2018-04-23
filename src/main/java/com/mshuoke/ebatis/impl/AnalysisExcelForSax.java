@@ -373,6 +373,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					}
 				}
 				// 调用反射方法
+//				T obj = null;
 				T obj = (T)reflexObject.getReflexObject(reflexVO.getAct().getObjects().getClass(), 
 						listHeader, 
 						rowInfo, 
