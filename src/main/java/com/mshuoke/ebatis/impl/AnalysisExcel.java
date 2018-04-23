@@ -327,7 +327,12 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 						cellLi.add("1970-01-01");
 					}
 					break;
-				}else if(dataFormat == 58) {
+				}else if(dataFormat == 179){
+					Date javaDate = DateUtil.getJavaDate(cell.getNumericCellValue());
+					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月");
+					String string = simpleDateFormat.format(javaDate);
+					cellLi.add(string);
+				}else  if(dataFormat == 58 || dataFormat == 177) {
 					Date javaDate = DateUtil.getJavaDate(cell.getNumericCellValue());
 					SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM月dd日");
 					String string = simpleDateFormat.format(javaDate);

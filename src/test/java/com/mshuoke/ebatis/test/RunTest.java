@@ -16,7 +16,7 @@ import com.mshuoke.ebatis.test.pojo.ImportPojo;
 
 public class RunTest {
 	
-	@Test
+	//@Test
 	public void importTestAllRight() {
 		InputStream inputStream = null;
 		
@@ -43,12 +43,40 @@ public class RunTest {
 		
 	}
 	
+	@Test
+	public void manyDateTest() {
+		InputStream inputStream = null;
+		
+		try {
+			inputStream = new FileInputStream("exl/manydate.xlsx");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		long a1 = System.currentTimeMillis();
+		Init<ImportPojo> init = new Init<ImportPojo>(inputStream, new ImportPojo(), false);
+		ActionContext<ImportPojo> act = init.start();
+		long a2 = System.currentTimeMillis() - a1;
+		
+		System.out.println(act.getSheets().get(0).getInfo());
+		System.out.println(act.getSheets().get(0).getInfo().size());
+		System.out.println("正确行数：" + act.getSheets().get(0).getCorrectLine());
+		System.out.println("空白行数：" + act.getSheets().get(0).getBlankLineSize());
+		System.out.println("错误行数：" + act.getSheets().get(0).getErrorLineSize());
+		System.out.println("重复行数：" + act.getSheets().get(0).getRepeatLineSize());
+		System.out.println("耗时（s）：" + a2 / 1000);
+		System.out.println("耗时（ms）：" + a2);
+	}
+	
+	
+	
 	//@Test
 	public void createExcelTest() {
 		
 		InputStream inputStream = null;
 		try {
-			inputStream = new FileInputStream("create.xlsx");
+			inputStream = new FileInputStream("exl/create.xlsx");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
