@@ -1,4 +1,4 @@
-package com.mshuoke.ebatis.test;
+package com.mshuoke.ebatis.test.pojo;
 
 import java.util.Date;
 
