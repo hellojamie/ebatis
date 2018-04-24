@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
 import com.mshuoke.ebatis.emnu.FileType;
-import com.mshuoke.ebatis.exception.FileSizeErrorException;
 import com.mshuoke.ebatis.exception.FileTypeErrorException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.util.CheckFileType;
@@ -40,9 +39,8 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			// 判断文件大小 大于10M（10485760）切为xlsx的，使用sax处理
 			inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
 			int available = inputStream.available();
-			if(available > 1 && type == FileType.XLSX){
+			if(type == FileType.XLSX){
 				act.setUseSax(true);
-				// throw new FileSizeErrorException("The file size error max: 31457280 you file size: " + available);
 			}
 			act.setFileSizeByte(available);
 			

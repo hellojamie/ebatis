@@ -16,14 +16,11 @@ public class Init<T> {
 	
 	private InputStream inp;
 	
-	private T t;
-	
 	private VerificationTable<T> ver;
 	
-	public Init(InputStream inp, T t, boolean distinct) {
+	public Init(InputStream inp, Class<? extends T> t, boolean distinct) {
 		super();
 		this.inp = inp;
-		this.t = t;
 		act.setInputStream(inp);
 		act.setObjects(t);
 		act.setDistinct(distinct);
@@ -58,14 +55,4 @@ public class Init<T> {
 	public void setInp(InputStream inp) {
 		this.inp = inp;
 	}
-
-	public T getT() {
-		return t;
-	}
-
-	public void setT(T t) {
-		this.t = t;
-	}
-	
-	
 }

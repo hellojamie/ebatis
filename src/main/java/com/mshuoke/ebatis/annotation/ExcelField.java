@@ -6,8 +6,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.mshuoke.ebatis.emnu.SortType;
-
 /**
  * 指定生成的excel文件包含的属性和属性名还有位置,已经是否合并,顺序
  * @author 杨硕
@@ -24,8 +22,4 @@ public @interface ExcelField {
 	
 	public int width() default -1;
 	
-	public SortType sort() default SortType.ASC;
-	
-	public boolean merge() default false;
-
 }

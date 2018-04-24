@@ -137,6 +137,16 @@ public class SheetInfo<T> {
 	public void setInfo(List<T> info) {
 		this.info = info;
 	}
-	
+
+
+	@Override
+	public String toString() {
+		return "{\"line\":" + line + ", \"sheetName\":\"" + sheetName + "\", \"column\":" + column
+				+ ", \"correctLine\":" + correctLine + ", \"blankLineSize\":" + blankLineSize
+				+ ", \"errorLineSize\":" + errorLineSize + ", \"repeatLineSize\":" + repeatLineSize
+				+ ", \"info\":" + info + ", \"blankLine\":" + blankLine + ", \"errorLine\":" + errorLine
+				+ ", \"repeatLine\":" + repeatLine + "} ";
+	}
+
 	
 }

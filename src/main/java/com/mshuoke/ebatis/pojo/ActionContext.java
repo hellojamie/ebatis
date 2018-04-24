@@ -27,7 +27,7 @@ public class ActionContext<T> {
 	// 文件大小
 	private Integer fileSizeByte;
 	
-	private T objects;
+	private Class<? extends T> objects;
 	
 	private boolean useSax = false;
 	
@@ -61,11 +61,11 @@ public class ActionContext<T> {
 		this.result = result;
 	}
 
-	public T getObjects() {
+	public Class<? extends T> getObjects() {
 		return objects;
 	}
 
-	public void setObjects(T objects) {
+	public void setObjects(Class<? extends T> objects) {
 		this.objects = objects;
 	}
 
@@ -108,7 +108,6 @@ public class ActionContext<T> {
 	        }
 			byteArrayOutputStream.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -137,6 +136,13 @@ public class ActionContext<T> {
 	public void setByteArrayOutputStream(ByteArrayOutputStream byteArrayOutputStream) {
 		this.byteArrayOutputStream = byteArrayOutputStream;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "{\"sheets\":" + sheets + ", \"fileType\":\"" + fileType + "\", \"SheetSize\":" + SheetSize
+				+ ", \"fileSizeByte\":" + fileSizeByte + ", \"useSax\":" + useSax + ", \"distinct\":"
+				+ distinct + ", \"result\":" + result + "} ";
+	}
+
+
 }

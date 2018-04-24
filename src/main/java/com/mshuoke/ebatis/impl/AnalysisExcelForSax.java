@@ -23,7 +23,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
-import com.mshuoke.ebatis.exception.NoHeaderException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 import com.mshuoke.ebatis.util.ReflexObject;
@@ -164,10 +163,6 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		
 		public Set<T> getDistinctSet() {
 			return distinctSet;
-		}
-
-		public void setDistinctSet(Set<T> distinctSet) {
-			this.distinctSet = distinctSet;
 		}
 
 		public SheetInfo<T> getSheetInfo() {
@@ -347,6 +342,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		            
 		            // 将不足的cell补齐为""
 					List<String> ri = reflexVO.getRowInfo();
+					
 					if(ri.size() == index) {
 						ri.add(lastContents);
 					}else {
@@ -366,6 +362,23 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				// 将数据反射保存
 				List<String> listHeader = reflexVO.getListHeader();
 				List<String> rowInfo = reflexVO.getRowInfo();
+				boolean isAllEmpty = true;
+				
+				// 补齐之前首先判断list中是否本身就为空
+				for(String x : rowInfo) {
+					if(x != null && !x.trim().equals("")) {
+						isAllEmpty = false;
+						break;
+					}
+				}
+				if(isAllEmpty) {
+					// 重置列索引,直接返回
+					index = 0;
+					SheetInfo<T> sheetInfo = reflexVO.getSheetInfo();
+					sheetInfo.addBlankLine(reflexVO.getLineNum() - 1);
+					return;
+				}
+				
 				// 如果内容列表数量小于头列表数量，则补充""（这个是判断是否和头的 长度一致，不一致补""）
 				int range = (rowInfo.size() - listHeader.size()) * -1;
 				if(range > 0) {
@@ -375,7 +388,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				}
 				// 调用反射方法
 //				T obj = null;
-				T obj = (T)reflexObject.getReflexObject(reflexVO.getAct().getObjects().getClass(), 
+				T obj = (T)reflexObject.getReflexObject(reflexVO.getAct().getObjects(), 
 						listHeader, 
 						rowInfo, 
 						reflexVO.getSheetInfo().getSheetName(), 

@@ -32,7 +32,7 @@ public class ReflexObject<T> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public T getReflexObject(Class<?> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
+	public T getReflexObject(Class<? extends T> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
 		/*Object objects = act.getObjects();
 		Class<?> class1 = objects.getClass();*/
 		
@@ -45,7 +45,7 @@ public class ReflexObject<T> {
 		// 反射获取所有字段，遍历字段取得它们的注解参数，以map的形式保存下来复用
 		try {
 			
-			Constructor<?> constructor = class1.getConstructor();
+			Constructor<? extends T> constructor = class1.getConstructor();
 			object = constructor.newInstance();
 			
 			// 获取实体属性列表

@@ -98,9 +98,12 @@ public class ImportPojo {
 
 	@Override
 	public String toString() {
-		return "ImportPojo [id=" + id + ", phone=" + phone + ", date=" + date + ", name=" + name + ", point=" + point
-				+ ", number=" + number + ", sheetName=" + sheetName + ", lineNum=" + lineNum + "]";
+		return "{\"id\":" + id + ", \"phone\":\"" + phone + "\", \"date\":\"" + date + "\", \"name\":\"" + name
+				+ "\", \"point\":" + point + ", \"number\":" + number + ", \"sheetName\":\"" + sheetName
+				+ "\", \"lineNum\":" + lineNum + "} ";
 	}
+
+
 	
 	
 }
