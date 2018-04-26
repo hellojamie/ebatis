@@ -89,7 +89,7 @@ public class People {
 // Init接受一个InputStream对象，以及一个实体对象
 // 调用start开始
 // 通过ActionContext获取需要的信息
-Init<People> init = new Init<People>(inputStream, new People());
+Init<People> init = new Init<People>(file, new People());
 ActionContext<People> act = init.start();
 ```
 
