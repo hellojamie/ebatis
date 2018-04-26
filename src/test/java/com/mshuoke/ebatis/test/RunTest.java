@@ -3,17 +3,20 @@ package com.mshuoke.ebatis.test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.junit.Test;
 
 import com.mshuoke.ebatis.create.CreateExcel;
+import com.mshuoke.ebatis.impl.AnalysisExcelForSax;
 import com.mshuoke.ebatis.impl.Init;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.test.pojo.CreateExcelPOJO;
 import com.mshuoke.ebatis.test.pojo.ImportPojo;
+import com.mshuoke.ebatis.test.pojo.RealPojo;
 
 public class RunTest {
 	
@@ -86,20 +89,19 @@ public class RunTest {
 		// =========== xls for usermodel
 		runInit("exl/manyblanksheet.xls", false);
 	}
+
 	
 	/*
 	 * run 程序
 	 */
 	public void runInit(String fileName, boolean distinct) throws Exception {
-		InputStream inputStream = null;
 		ActionContext<ImportPojo> act = null;
 		Init<ImportPojo> init = null;
 		a1 = System.currentTimeMillis();
-		inputStream = new FileInputStream(fileName);
-		init = new Init<ImportPojo>(inputStream, ImportPojo.class, distinct);
+		File file = new File(fileName);
+		init = new Init<ImportPojo>(file, ImportPojo.class, distinct);
 		act = init.start();
 		printInfo(act);
-		inputStream.close();
 	}
 	
 	/**
@@ -134,14 +136,9 @@ public class RunTest {
 	//@Test
 	public void createExcelTest() {
 		
-		InputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream("exl/create.xlsx");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		File file = new File("exl/create.xlsx");
 		
-		Init<CreateExcelPOJO> init = new Init<CreateExcelPOJO>(inputStream, CreateExcelPOJO.class, true);
+		Init<CreateExcelPOJO> init = new Init<CreateExcelPOJO>(file, CreateExcelPOJO.class, true);
 		ActionContext<CreateExcelPOJO> act = init.start();
 		
 		List<CreateExcelPOJO> list = act.getSheets().get(0).getInfo();

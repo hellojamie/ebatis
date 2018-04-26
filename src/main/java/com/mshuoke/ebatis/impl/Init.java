@@ -1,5 +1,6 @@
 package com.mshuoke.ebatis.impl;
 
+import java.io.File;
 import java.io.InputStream;
 
 import com.mshuoke.ebatis.pojo.ActionContext;
@@ -14,14 +15,11 @@ public class Init<T> {
 	
 	private ActionContext<T> act = new ActionContext<T>();
 	
-	private InputStream inp;
-	
 	private VerificationTable<T> ver;
 	
-	public Init(InputStream inp, Class<? extends T> t, boolean distinct) {
+	public Init(File file, Class<? extends T> t, boolean distinct) {
 		super();
-		this.inp = inp;
-		act.setInputStream(inp);
+		act.setFile(file);
 		act.setObjects(t);
 		act.setDistinct(distinct);
 	}
@@ -48,11 +46,4 @@ public class Init<T> {
 		this.act = act;
 	}
 
-	public InputStream getInp() {
-		return inp;
-	}
-
-	public void setInp(InputStream inp) {
-		this.inp = inp;
-	}
 }

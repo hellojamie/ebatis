@@ -1,5 +1,7 @@
 package com.mshuoke.ebatis.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,17 +27,22 @@ public class CheckFileType {
     private static String getFileHeader(InputStream inputStream) throws IOException {  
         byte[] b = new byte[28];//这里需要注意的是,每个文件的magic word的长度都不相同,因此需要使用startwith  
         inputStream.read(b, 0, 28);  
-        inputStream.close();  
-                  
+        
         return getByteStr(b);  
     }  
       
     /** 
      * 判断文件类型 
      */  
-    public static FileType getType(InputStream inputStream) throws IOException {  
+    public static FileType getType(File file) throws IOException {  
           
+    	InputStream inputStream = new FileInputStream(file);
+    	
         String fileHead = getFileHeader(inputStream);  
+        
+        inputStream.close(); 
+        inputStream = null;
+        
         if (fileHead == null || fileHead.length() == 0) {  
             return null;  
         }  

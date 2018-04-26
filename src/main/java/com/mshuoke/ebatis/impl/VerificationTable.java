@@ -2,6 +2,7 @@ package com.mshuoke.ebatis.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
 import com.mshuoke.ebatis.emnu.FileType;
@@ -24,10 +25,9 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 		
 		// 获取文件格式是否正确，文件大小是否超量
 		FileType type = null;
-		ByteArrayInputStream inputStream = null;
-		
+		InputStream inputStream = null;
 		try {
-			type = CheckFileType.getType(act.getInputStream());
+			type = CheckFileType.getType(act.getFile());
 			// 如果类型不存在，抛出
 			if(type == null){
 				throw new FileTypeErrorException("This file type is error, Not's xsl or xslx");
@@ -37,8 +37,9 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			act.setFileType(type);
 			
 			// 判断文件大小 大于10M（10485760）切为xlsx的，使用sax处理
-			inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
+			inputStream = act.getInputStream();
 			int available = inputStream.available();
+			
 			if(type == FileType.XLSX){
 				act.setUseSax(true);
 			}
@@ -54,15 +55,13 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
-			
-				try {
-					if(inputStream != null) {
-						inputStream.close();
-					}
-				} catch (IOException e) {
-					e.printStackTrace();
-					rollback(act);
-				}
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			inputStream = null;
 		}
 		
 	}

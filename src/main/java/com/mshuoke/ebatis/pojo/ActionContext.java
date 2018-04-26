@@ -2,6 +2,9 @@ package com.mshuoke.ebatis.pojo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -10,9 +13,11 @@ import java.util.List;
 import com.mshuoke.ebatis.emnu.FileType;
 
 public class ActionContext<T> {
-	private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();;
 	
-	// 文件流
+	// 文件
+	private File file;
+	
+	// 流
 	private InputStream inputStream;
 	
 	// 表格内数据
@@ -92,26 +97,13 @@ public class ActionContext<T> {
 	public void setFileType(FileType fileType) {
 		this.fileType = fileType;
 	}
-
-	public InputStream getInputStream() {
-		return inputStream;
+	
+	public File getFile() {
+		return file;
 	}
 
-	public void setInputStream(InputStream inputStream) {
-		
-		byte[] buffer;
-		int len;
-		try {
-			buffer = new byte[inputStream.available()];
-			while ((len = inputStream.read(buffer)) > -1 ) {    
-				byteArrayOutputStream.write(buffer, 0, len);    
-	        }
-			byteArrayOutputStream.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		this.inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+	public void setFile(File file) {
+		this.file = file;
 	}
 
 	public List<SheetInfo<T>> getSheets() {
@@ -129,12 +121,17 @@ public class ActionContext<T> {
 		
 	}
 
-	public ByteArrayOutputStream getByteArrayOutputStream() {
-		return byteArrayOutputStream;
-	}
-
-	public void setByteArrayOutputStream(ByteArrayOutputStream byteArrayOutputStream) {
-		this.byteArrayOutputStream = byteArrayOutputStream;
+	public InputStream getInputStream() {
+		if(this.file != null) {
+			InputStream inputStream = null;
+			try {
+				inputStream = new FileInputStream(this.file);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			return inputStream;
+		}
+		return null;
 	}
 
 	@Override

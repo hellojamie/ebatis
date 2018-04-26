@@ -1,6 +1,9 @@
 package com.mshuoke.ebatis.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -46,7 +49,13 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			return;
 		}
 		
-		InputStream inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(act.getFile());
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		Workbook wb = null;
 		// 创建poi对象
@@ -67,6 +76,13 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		}catch(IOException e){
 			e.printStackTrace();
 			rollback(act);
+		}finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 		// sheet数量

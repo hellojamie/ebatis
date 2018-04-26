@@ -1,6 +1,7 @@
 package com.mshuoke.ebatis.impl;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
@@ -46,12 +48,11 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		
 		// 正式代码开始
 		
-		InputStream inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
 		
 		try {
 			ReflexVO<T> reflexVO = new ReflexVO<T>();
 			reflexVO.setAct(act);
-			processAllSheets(inputStream, reflexVO);
+			processAllSheets(act.getFile(), reflexVO);
 		} catch (Exception e) {
 			rollback(act);
 			e.printStackTrace();
@@ -77,8 +78,8 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 
 	private static StylesTable stylesTable;
 	
-	public void processAllSheets(InputStream inputStream, ReflexVO<T> reflexVO) throws Exception {
-		OPCPackage pkg = OPCPackage.open(inputStream);
+	public void processAllSheets(File file, ReflexVO<T> reflexVO) throws Exception {
+		OPCPackage pkg = OPCPackage.open(file,PackageAccess.READ);
 		XSSFReader r = new XSSFReader(pkg);
 		
 		stylesTable = r.getStylesTable();
