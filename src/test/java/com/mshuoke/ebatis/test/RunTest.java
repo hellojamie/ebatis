@@ -90,6 +90,18 @@ public class RunTest {
 		runInit("exl/manyblanksheet.xls", false);
 	}
 
+	@Test
+	public void realTest() {
+		ActionContext<RealPojo> act = null;
+		Init<RealPojo> init = null;
+		a1 = System.currentTimeMillis();
+		File file = new File("exl/moushi20180321(100W).xlsx");
+		init = new Init<RealPojo>(file, RealPojo.class, false);
+		act = init.start();
+		System.out.println(act.getSheets().get(0).getInfo().get(0).getDate());
+		System.out.println("over my head");
+	}
+	
 	
 	/*
 	 * run 程序
