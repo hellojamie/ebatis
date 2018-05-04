@@ -1,17 +1,13 @@
 package com.mshuoke.ebatis.test;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.junit.Test;
 
 import com.mshuoke.ebatis.create.CreateExcel;
-import com.mshuoke.ebatis.impl.AnalysisExcelForSax;
 import com.mshuoke.ebatis.impl.Init;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.test.pojo.CreateExcelPOJO;
@@ -102,6 +98,19 @@ public class RunTest {
 		System.out.println("over my head");
 	}
 	
+	@Test
+	public void test100w() {
+		
+		List<RealPojo> list = new ArrayList<RealPojo>();
+		
+		for(int i=0; i < 1000000; i++) {
+			RealPojo pojo = new RealPojo(1,"66677776666",new Date(),"大强","小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
+			list.add(pojo);
+		}
+		
+		System.out.println("生产完毕");
+		
+	}
 	
 	/*
 	 * run 程序

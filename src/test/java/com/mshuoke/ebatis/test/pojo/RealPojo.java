@@ -51,6 +51,31 @@ public class RealPojo {
 	@Mapping(key = "点击量")
 	private Integer hits;
 
+	public RealPojo() {}
+	
+	public RealPojo(Integer number, String phone, Date date, String name, String parentName, String parentSex,
+			String sex, Integer age, String kidBirth, String school, String city, String sheng, Integer batch,
+			String source, Integer hits) {
+		super();
+		this.number = number;
+		this.phone = phone;
+		this.date = date;
+		this.name = name;
+		this.parentName = parentName;
+		this.parentSex = parentSex;
+		this.sex = sex;
+		this.age = age;
+		this.kidBirth = kidBirth;
+		this.school = school;
+		this.city = city;
+		this.sheng = sheng;
+		this.batch = batch;
+		this.source = source;
+		this.hits = hits;
+	}
+
+
+
 	public Integer getNumber() {
 		return number;
 	}

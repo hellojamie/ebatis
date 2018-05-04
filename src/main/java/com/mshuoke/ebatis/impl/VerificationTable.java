@@ -1,6 +1,5 @@
 package com.mshuoke.ebatis.impl;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -49,16 +48,16 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 			commit(act);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (FileTypeErrorException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally{
 			try {
-				inputStream.close();
+				if(inputStream != null) {
+					inputStream.close();
+				}
+				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			inputStream = null;

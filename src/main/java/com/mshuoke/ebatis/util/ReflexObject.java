@@ -1,6 +1,5 @@
 package com.mshuoke.ebatis.util;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -22,6 +21,13 @@ import com.mshuoke.ebatis.annotation.MappingSheetName;
  * @param <T>
  */
 public class ReflexObject<T> {
+	
+	// 获取实体属性列表
+	private Field[] fields = null;
+	private Class<Mapping> mapping = Mapping.class;
+	private Class<MappingSheetName> mappingSheetName = MappingSheetName.class;
+	private Class<LineNumber> lineNumber = LineNumber.class;
+	
 	/**
 	 * 将cell的信息反射进java bean
 	 * @param class1 反射对象
@@ -48,18 +54,13 @@ public class ReflexObject<T> {
 			Constructor<? extends T> constructor = class1.getConstructor();
 			object = constructor.newInstance();
 			
-			// 获取实体属性列表
-			Field[] fields = class1.getDeclaredFields();
-			Class<Mapping> mapping = Mapping.class;
-			Class<MappingSheetName> mappingSheetName = MappingSheetName.class;
-			Class<LineNumber> lineNumber = LineNumber.class;
+			// 获取实体属性列表(只赋值一次)
+			if(fields == null) {
+				fields = class1.getDeclaredFields();
+			}
 			
 			for(Field x : fields) {
 				// 获取当前属性的注解数组，并查看是否有数量
-				Annotation[] annotations = x.getAnnotations();
-				if(annotations.length == 0) {
-					continue;
-				}
 				Mapping m = x.getAnnotation(mapping);
 				MappingSheetName msn = x.getAnnotation(mappingSheetName);
 				LineNumber ln = x.getAnnotation(lineNumber);
@@ -103,7 +104,6 @@ public class ReflexObject<T> {
 		}
 		
 		return (T)object;
-		
 		/*
 		 * 改版代码结束================================================
 		 */
@@ -141,7 +141,7 @@ public class ReflexObject<T> {
 		for(int y=0; y<headStr.size(); y++) {
 			// 当前头标
 			String thisHead = headStr.get(y);
-			if(title.equals(thisHead) && !thisHead.equals("") && thisHead != null){
+			if(thisHead != null && title.equals(thisHead) && !thisHead.equals("")){
 				
 				String string = analysisRow.get(y);
 				
@@ -302,9 +302,7 @@ public class ReflexObject<T> {
 			break;
 		case "class java.lang.Boolean":
 			Boolean parseBoolean = null;
-			try{
-				parseBoolean = Boolean.parseBoolean(fieldValue);
-			}catch(Exception e){}
+			parseBoolean = Boolean.parseBoolean(fieldValue);
 			class1.getMethod(methodName, Boolean.class).invoke(object, parseBoolean);
 			break;
 		}

@@ -1,7 +1,5 @@
 package com.mshuoke.ebatis.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +21,6 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.mshuoke.ebatis.api.DataHandleAction;
-import com.mshuoke.ebatis.exception.NoHeaderException;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
 import com.mshuoke.ebatis.util.ReflexObject;
@@ -53,7 +50,6 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		try {
 			inputStream = new FileInputStream(act.getFile());
 		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -78,15 +74,19 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			rollback(act);
 		}finally {
 			try {
-				inputStream.close();
+				if(inputStream != null) {
+					inputStream.close();
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
 		// sheet数量
-		int numberOfSheets = wb.getNumberOfSheets();
+		int numberOfSheets = 0;
+		if(wb != null) {
+			numberOfSheets = wb.getNumberOfSheets();
+		}
 		act.setSheetSize(numberOfSheets);
 		// 第一sheet的列数量
 		int firstSheetHeadNum = -1;

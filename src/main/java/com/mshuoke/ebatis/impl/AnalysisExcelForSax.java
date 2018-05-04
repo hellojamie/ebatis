@@ -280,7 +280,8 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		            formatIndex = style.getDataFormat();
 		            formatString = style.getDataFormatString();
 		            // 如果格式中有ymd三种字母，表示为日期格式，将他们转换
-		            if (formatIndex == 14 || formatIndex == 31 || formatIndex == 57 || formatIndex == 176 || formatIndex == 178) {
+		            // System.out.println(formatIndex  + formatString);
+		            if (formatIndex == 14 || formatIndex == 31 || formatIndex == 57 || formatIndex == 176 || formatIndex == 178 || formatIndex == 166) {
 		                formatString = "yyyy-MM-dd";
 		            }else if(formatIndex == 58 || formatIndex == 177){
 		            	formatString = "MM月dd日";
