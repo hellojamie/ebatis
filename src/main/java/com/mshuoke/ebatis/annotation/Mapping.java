@@ -18,6 +18,8 @@ import java.lang.annotation.Target;
 public @interface Mapping {
 	public String key();
 	
+	public int length() default -1;
+	
 	public String rex() default "";
 	
 	public boolean delNull() default false;

@@ -243,7 +243,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				int range = thisLine - reflexVO.getLineNum() - 1;	// 当前行 - 上一行 - 1 正常应该等于0
 				if(range > 0) {
 					for(int i = 0; i < range; i++) {
-						reflexVO.getSheetInfo().addBlankLine(reflexVO.getLineNum() + i + 1 - 1);
+						reflexVO.getSheetInfo().addBlankLine(reflexVO.getLineNum() + i + 1);
 					}
 				}
 				
@@ -377,7 +377,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					// 重置列索引,直接返回
 					index = 0;
 					SheetInfo<T> sheetInfo = reflexVO.getSheetInfo();
-					sheetInfo.addBlankLine(reflexVO.getLineNum() - 1);
+					sheetInfo.addBlankLine(reflexVO.getLineNum());
 					return;
 				}
 				
@@ -394,7 +394,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 						listHeader, 
 						rowInfo, 
 						reflexVO.getSheetInfo().getSheetName(), 
-						reflexVO.getLineNum() - 1);
+						reflexVO.getLineNum());
 				
 				// 如果反射中未出现问题，保留信息进列表
 				if(obj != null) {
@@ -405,7 +405,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 						// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
 						if(!add) {
 							// 将重复的记录下来,设置行数
-							reflexVO.getSheetInfo().addRepeatLine(reflexVO.getLineNum() - 1);
+							reflexVO.getSheetInfo().addRepeatLine(reflexVO.getLineNum());
 							// 重复不执行后续操作
 							flag = false;
 						}
@@ -420,7 +420,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				}
 				
 				if(obj == null) {
-					reflexVO.getSheetInfo().addErrorLine(reflexVO.getLineNum() - 1);
+					reflexVO.getSheetInfo().addErrorLine(reflexVO.getLineNum());
 				}
 				
 				// 一行结束，重置列索引

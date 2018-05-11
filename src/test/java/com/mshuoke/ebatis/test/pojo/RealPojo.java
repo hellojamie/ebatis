@@ -9,7 +9,7 @@ public class RealPojo {
 	@Mapping(key = "编号")
 	private Integer number;
 	
-	@Mapping(key = "电话号码")
+	@Mapping(key = "电话号码",length=8)
 	private String phone;
 	
 	@Mapping(key = "日期")
@@ -194,6 +194,17 @@ public class RealPojo {
 
 	public void setHits(Integer hits) {
 		this.hits = hits;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hashCode = (this.phone + this.name).hashCode();
+		return hashCode;
+	}
+	
+	@Override
+	public boolean equals(Object str) {
+		return true;
 	}
 	
 }

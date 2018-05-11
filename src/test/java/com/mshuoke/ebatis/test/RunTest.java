@@ -3,7 +3,10 @@ package com.mshuoke.ebatis.test;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -94,21 +97,51 @@ public class RunTest {
 		File file = new File("exl/moushi20180321(100W).xlsx");
 		init = new Init<RealPojo>(file, RealPojo.class, false);
 		act = init.start();
-		System.out.println(act.getSheets().get(0).getInfo().get(0).getDate());
+		System.out.println(act.getSheets().get(0).getInfo().get(0).getPhone());
 		System.out.println("over my head");
 	}
 	
 	@Test
 	public void test100w() {
 		
-		List<RealPojo> list = new ArrayList<RealPojo>();
+		List<RealPojo> list = new LinkedList<RealPojo>();
+		List<RealPojo> list2 = new LinkedList<RealPojo>();
 		
-		for(int i=0; i < 1000000; i++) {
-			RealPojo pojo = new RealPojo(1,"66677776666",new Date(),"大强","小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
+		for(int i=0; i < 200000; i++) {
+			RealPojo pojo = new RealPojo(1,"18235201111",new Date(),"大强" + i,"小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
+			list.add(pojo);
+		}
+		for(int i=0; i < 200000; i++) {
+			RealPojo pojo = new RealPojo(1,"18235202222",new Date(),"大强" + i,"小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
 			list.add(pojo);
 		}
 		
+		for(int i=0; i < 199999; i++) {
+			RealPojo pojo = new RealPojo(111,"18235201111",new Date(),"强" + i,"小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
+			list2.add(pojo);
+		}
+		for(int i=0; i < 199999; i++) {
+			RealPojo pojo = new RealPojo(222,"18235202222",new Date(),"强" + i,"小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
+			list2.add(pojo);
+		}
+		RealPojo pojo = new RealPojo(1,"18235202222",new Date(),"大强","小强","男","男",18,"19960410","16校","上海","上海",1,"电话",2);
 		System.out.println("生产完毕");
+		System.out.println("list1：" + list.size());
+		System.out.println("list2：" + list2.size());
+		System.out.println("开始removeall");
+//		boolean removeAll = list.removeAll(list2);
+//		System.out.println(removeAll);
+//		System.out.println(list.size());
+		Set<RealPojo> set = new HashSet<RealPojo>();
+		for(RealPojo r1:list) {
+			set.add(r1);
+		}
+		for(RealPojo r2:list2) {
+			set.add(r2);
+		}
+		List<RealPojo> list3 = new ArrayList<RealPojo>(set);
+		System.out.println(set.size());
+		System.out.println(list3.size());
 		
 	}
 	

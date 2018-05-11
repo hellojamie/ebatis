@@ -261,7 +261,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			boolean rowEmpty = isRowEmpty(row2);
 			
 			if(rowEmpty) {
-				sheetInfo.addBlankLine(i);
+				sheetInfo.addBlankLine(i + 1);
 				continue;
 			}
 			
@@ -272,11 +272,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				rowMap.put(headStr.get(y), analysisRow.get(y));
 			}*/
 			
-			t = reflexObject.getReflexObject(object,headStr,analysisRow,sheet.getSheetName(), i);
+			t = reflexObject.getReflexObject(object,headStr,analysisRow,sheet.getSheetName(), i + 1);
 			
 			// 如果在反射期间引发错误，该行将做失败处理
 			if(t == null) {
-				sheetInfo.addErrorLine(i);
+				sheetInfo.addErrorLine(i + 1);
 				continue;
 			}
 			
@@ -287,7 +287,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
 				if(!add) {
 					// 将重复的记录下来,设置行数
-					sheetInfo.addRepeatLine(i);
+					sheetInfo.addRepeatLine(i + 1);
 					// 重复不执行后续操作
 					flag = false;
 				}

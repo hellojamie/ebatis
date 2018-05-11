@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,6 +132,8 @@ public class ReflexObject<T> {
 		String title = mapping.key();
 		// 获取注解正则属性
 		String rex = mapping.rex();
+		// 获取注解的截取长度
+		int length = mapping.length();
 		
 		// 拼接方法名
 		String methodName = new StringBuilder()
@@ -144,6 +147,10 @@ public class ReflexObject<T> {
 			if(thisHead != null && title.equals(thisHead) && !thisHead.equals("")){
 				
 				String string = analysisRow.get(y);
+				// 如果大于0说明截取(先做截取操作)
+				if(length > 0){
+					string = string.substring(0, length);
+				}
 				
 				// 判断正则是否为空，为空则不处理
 				if(!rex.equals("")) {
@@ -323,4 +330,62 @@ public class ReflexObject<T> {
 		
 		return parseDouble;
 	}
+	
+//	/**
+//	 * 检查重复的对象那个标签包含的多，则留下那个
+//	 * @param iterator
+//	 * @param t
+//	 * @return
+//	 */
+//	public boolean distinctCheck(Iterator<T> iterator, T t) {
+//		boolean bol = false;
+//		int hashCode1 = t.hashCode();
+//		while(iterator.hasNext()) {
+//			T next = iterator.next();
+//			if(next.hashCode() == hashCode1) {
+//				int checkEntityFieldSize = checkEntityFieldSize(next,t);
+//				if(checkEntityFieldSize > 0) {
+//					return true;
+//				}
+//				break;
+//			}
+//		}
+//		
+//		return bol;
+//	}
+//	
+//	/**
+//	 * 检查对比两个对象拥有的属性值，不为空和不为null的数量
+//	 * @param t1 之前存在的
+//	 * @param t2 即将加入的
+//	 * @return
+//	 */
+//	public int checkEntityFieldSize(T t1, T t2) {
+//		Class<? extends Object> class1 = t1.getClass();
+//		Class<? extends Object> class2 = t2.getClass();
+//		int sum = 0;
+//		for(Field f:fields) {
+//			try {
+//				String methodName = "get" + ConvertUtil.upperCase(f.getName());
+//				Object invoke = class1.getMethod(methodName).invoke(t1);
+//				Object invoke2 = class2.getMethod(methodName).invoke(t2);
+//				if(invoke == null && invoke2 != null) {
+//					sum += 1;
+//				}else if(invoke != null && invoke2 == null) {
+//					sum += -1;
+//				}
+//			} catch (NoSuchMethodException e) {
+//				e.printStackTrace();
+//			} catch (SecurityException e) {
+//				e.printStackTrace();
+//			} catch (IllegalAccessException e) {
+//				e.printStackTrace();
+//			} catch (IllegalArgumentException e) {
+//				e.printStackTrace();
+//			} catch (InvocationTargetException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return sum;
+//	}
 }
