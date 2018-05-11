@@ -1,6 +1,7 @@
 package com.mshuoke.ebatis.impl;
 
-import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -11,9 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -45,7 +46,12 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			return;
 		}
 		
-		InputStream inputStream = new ByteArrayInputStream(act.getByteArrayOutputStream().toByteArray());
+		InputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(act.getFile());
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
 		
 		Workbook wb = null;
 		// 创建poi对象
@@ -66,10 +72,21 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		}catch(IOException e){
 			e.printStackTrace();
 			rollback(act);
+		}finally {
+			try {
+				if(inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// sheet数量
-		int numberOfSheets = wb.getNumberOfSheets();
+		int numberOfSheets = 0;
+		if(wb != null) {
+			numberOfSheets = wb.getNumberOfSheets();
+		}
 		act.setSheetSize(numberOfSheets);
 		// 第一sheet的列数量
 		int firstSheetHeadNum = -1;
@@ -79,9 +96,12 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				Sheet sheet = wb.getSheetAt(n);
 				// 获取第一行
 				Row row = sheet.getRow(0);
-				if(row == null)
-					continue;
-				int cellNum = row.getLastCellNum();
+				
+				int cellNum = 0;
+				if(row != null) {
+					cellNum = row.getLastCellNum();
+				}
+				
 				for(int i=0; i<cellNum; i++){
 					Cell cell = row.getCell(i);
 					int cellType = -1;
@@ -115,6 +135,8 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			SheetInfo<T> sheetInfo = new SheetInfo<T>();
 			List<T> analysisSheet = analysisSheet(sheet,act.getObjects(),sheetInfo,distinct);
 			if(analysisSheet == null) {
+				sheetInfo.setSheetName(sheet.getSheetName());
+				excelInfo.add(sheetInfo);
 				continue;
 			}
 			sheetInfo.setInfo(analysisSheet);
@@ -158,7 +180,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @return List<String>
 	 */
 	@SuppressWarnings("deprecation")
-	List<T> analysisSheet(Sheet sheet,Object object,SheetInfo<T> sheetInfo, boolean distinct){
+	List<T> analysisSheet(Sheet sheet,Class<? extends T> object,SheetInfo<T> sheetInfo, boolean distinct){
 		// 信息数据
 		int lastRowNum = sheet.getLastRowNum(); // 一共几行
 		
@@ -239,7 +261,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			boolean rowEmpty = isRowEmpty(row2);
 			
 			if(rowEmpty) {
-				sheetInfo.addBlankLine(i);
+				sheetInfo.addBlankLine(i + 1);
 				continue;
 			}
 			
@@ -250,11 +272,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				rowMap.put(headStr.get(y), analysisRow.get(y));
 			}*/
 			
-			t = reflexObject.getReflexObject(object.getClass(),headStr,analysisRow,sheet.getSheetName(), i);
+			t = reflexObject.getReflexObject(object,headStr,analysisRow,sheet.getSheetName(), i + 1);
 			
 			// 如果在反射期间引发错误，该行将做失败处理
 			if(t == null) {
-				sheetInfo.addErrorLine(i);
+				sheetInfo.addErrorLine(i + 1);
 				continue;
 			}
 			
@@ -265,7 +287,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				// 如果等于false,添加失败，即相等，则不添加进集合，做重复处理
 				if(!add) {
 					// 将重复的记录下来,设置行数
-					sheetInfo.addRepeatLine(i);
+					sheetInfo.addRepeatLine(i + 1);
 					// 重复不执行后续操作
 					flag = false;
 				}
@@ -303,12 +325,24 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				cellLi.add(cell.getBooleanCellValue() + "");
 				break;
 			case Cell.CELL_TYPE_FORMULA:
-				cellLi.add(cell.getCellFormula());
+				cellLi.add(String.valueOf(cell.getNumericCellValue()));
+				// cellLi.add(cell.getCellFormula());
 				break;
 			case Cell.CELL_TYPE_NUMERIC:
-				if(HSSFDateUtil.isCellDateFormatted(cell)){
+				short dataFormat = cell.getCellStyle().getDataFormat();
+				if(DateUtil.isCellDateFormatted(cell)){
 					Date date = cell.getDateCellValue();
-					if(date != null){
+					if(dataFormat == 179){
+						Date javaDate = DateUtil.getJavaDate(cell.getNumericCellValue());
+						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy年MM月");
+						String string = simpleDateFormat.format(javaDate);
+						cellLi.add(string);
+					}else if(dataFormat == 58 || dataFormat == 177) {
+						Date javaDate = DateUtil.getJavaDate(cell.getNumericCellValue());
+						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM月dd日");
+						String string = simpleDateFormat.format(javaDate);
+						cellLi.add(string);
+					}else if(date != null){
 						SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 						String string = simpleDateFormat.format(date);
 						cellLi.add(string);

@@ -1,12 +1,12 @@
 package com.mshuoke.ebatis.util;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,6 +22,13 @@ import com.mshuoke.ebatis.annotation.MappingSheetName;
  * @param <T>
  */
 public class ReflexObject<T> {
+	
+	// 获取实体属性列表
+	private Field[] fields = null;
+	private Class<Mapping> mapping = Mapping.class;
+	private Class<MappingSheetName> mappingSheetName = MappingSheetName.class;
+	private Class<LineNumber> lineNumber = LineNumber.class;
+	
 	/**
 	 * 将cell的信息反射进java bean
 	 * @param class1 反射对象
@@ -32,7 +39,7 @@ public class ReflexObject<T> {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public T getReflexObject(Class<?> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
+	public T getReflexObject(Class<? extends T> class1, List<String> headStr, List<String> analysisRow, String sheetName, int lineNum){
 		/*Object objects = act.getObjects();
 		Class<?> class1 = objects.getClass();*/
 		
@@ -45,21 +52,16 @@ public class ReflexObject<T> {
 		// 反射获取所有字段，遍历字段取得它们的注解参数，以map的形式保存下来复用
 		try {
 			
-			Constructor<?> constructor = class1.getConstructor();
+			Constructor<? extends T> constructor = class1.getConstructor();
 			object = constructor.newInstance();
 			
-			// 获取实体属性列表
-			Field[] fields = class1.getDeclaredFields();
-			Class<Mapping> mapping = Mapping.class;
-			Class<MappingSheetName> mappingSheetName = MappingSheetName.class;
-			Class<LineNumber> lineNumber = LineNumber.class;
+			// 获取实体属性列表(只赋值一次)
+			if(fields == null) {
+				fields = class1.getDeclaredFields();
+			}
 			
 			for(Field x : fields) {
 				// 获取当前属性的注解数组，并查看是否有数量
-				Annotation[] annotations = x.getAnnotations();
-				if(annotations.length == 0) {
-					continue;
-				}
 				Mapping m = x.getAnnotation(mapping);
 				MappingSheetName msn = x.getAnnotation(mappingSheetName);
 				LineNumber ln = x.getAnnotation(lineNumber);
@@ -103,26 +105,11 @@ public class ReflexObject<T> {
 		}
 		
 		return (T)object;
-		
 		/*
 		 * 改版代码结束================================================
 		 */
 		
 	}
-	
-	/**
-	 * 首字母转为大写
-	 * @param str
-	 * @return
-	 */
-	public String upperCase(String str) {  
-	    char[] ch = str.toCharArray();  
-	    if (ch[0] >= 'a' && ch[0] <= 'z') {  
-	        ch[0] = (char) (ch[0] - 32);  
-	    }  
-	    return new String(ch);  
-	} 
-	
 	
 	/*改版测试方法如下*/
 	
@@ -145,19 +132,25 @@ public class ReflexObject<T> {
 		String title = mapping.key();
 		// 获取注解正则属性
 		String rex = mapping.rex();
+		// 获取注解的截取长度
+		int length = mapping.length();
 		
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		
 		for(int y=0; y<headStr.size(); y++) {
 			// 当前头标
 			String thisHead = headStr.get(y);
-			if(title.equals(thisHead) && !thisHead.equals("") && thisHead != null){
+			if(thisHead != null && title.equals(thisHead) && !thisHead.equals("")){
 				
 				String string = analysisRow.get(y);
+				// 如果大于0说明截取(先做截取操作),并且防止下标超出判断一下够不够
+				if(length > 0 && string.length() > length){
+					string = string.substring(0, length);
+				}
 				
 				// 判断正则是否为空，为空则不处理
 				if(!rex.equals("")) {
@@ -198,7 +191,7 @@ public class ReflexObject<T> {
 
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		
@@ -223,7 +216,7 @@ public class ReflexObject<T> {
 
 		// 拼接方法名
 		String methodName = new StringBuilder()
-				.append("set").append(upperCase(fieldName)).toString();
+				.append("set").append(ConvertUtil.upperCase(fieldName)).toString();
 		
 		String fieldType = field.getType().toString();
 		
@@ -316,9 +309,7 @@ public class ReflexObject<T> {
 			break;
 		case "class java.lang.Boolean":
 			Boolean parseBoolean = null;
-			try{
-				parseBoolean = Boolean.parseBoolean(fieldValue);
-			}catch(Exception e){}
+			parseBoolean = Boolean.parseBoolean(fieldValue);
 			class1.getMethod(methodName, Boolean.class).invoke(object, parseBoolean);
 			break;
 		}
@@ -339,4 +330,62 @@ public class ReflexObject<T> {
 		
 		return parseDouble;
 	}
+	
+//	/**
+//	 * 检查重复的对象那个标签包含的多，则留下那个
+//	 * @param iterator
+//	 * @param t
+//	 * @return
+//	 */
+//	public boolean distinctCheck(Iterator<T> iterator, T t) {
+//		boolean bol = false;
+//		int hashCode1 = t.hashCode();
+//		while(iterator.hasNext()) {
+//			T next = iterator.next();
+//			if(next.hashCode() == hashCode1) {
+//				int checkEntityFieldSize = checkEntityFieldSize(next,t);
+//				if(checkEntityFieldSize > 0) {
+//					return true;
+//				}
+//				break;
+//			}
+//		}
+//		
+//		return bol;
+//	}
+//	
+//	/**
+//	 * 检查对比两个对象拥有的属性值，不为空和不为null的数量
+//	 * @param t1 之前存在的
+//	 * @param t2 即将加入的
+//	 * @return
+//	 */
+//	public int checkEntityFieldSize(T t1, T t2) {
+//		Class<? extends Object> class1 = t1.getClass();
+//		Class<? extends Object> class2 = t2.getClass();
+//		int sum = 0;
+//		for(Field f:fields) {
+//			try {
+//				String methodName = "get" + ConvertUtil.upperCase(f.getName());
+//				Object invoke = class1.getMethod(methodName).invoke(t1);
+//				Object invoke2 = class2.getMethod(methodName).invoke(t2);
+//				if(invoke == null && invoke2 != null) {
+//					sum += 1;
+//				}else if(invoke != null && invoke2 == null) {
+//					sum += -1;
+//				}
+//			} catch (NoSuchMethodException e) {
+//				e.printStackTrace();
+//			} catch (SecurityException e) {
+//				e.printStackTrace();
+//			} catch (IllegalAccessException e) {
+//				e.printStackTrace();
+//			} catch (IllegalArgumentException e) {
+//				e.printStackTrace();
+//			} catch (InvocationTargetException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		return sum;
+//	}
 }

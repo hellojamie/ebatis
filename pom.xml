@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.mshuoke.ebatis</groupId>
   <artifactId>ebatis</artifactId>
-  <version>1.1</version>
+  <version>1.0</version>
   <dependencies>
   	<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
 	<dependency>
@@ -23,7 +23,6 @@
 	    <version>2.9.1</version>
 	</dependency>
 
-
   </dependencies>
   <build>    
         <plugins>    
@@ -37,4 +36,5 @@
             </plugin>    
         </plugins>    
     </build>
+    
 </project>
