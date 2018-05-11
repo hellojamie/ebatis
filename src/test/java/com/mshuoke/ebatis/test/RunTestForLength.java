@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import com.mshuoke.ebatis.impl.Init;
 import com.mshuoke.ebatis.pojo.ActionContext;
-import com.mshuoke.ebatis.test.pojo.ImportPojo;
 import com.mshuoke.ebatis.test.pojo.ImportPojoForLength;
-import com.mshuoke.ebatis.test.pojo.ImportPojoForRex;
 
 public class RunTestForLength {
 	
