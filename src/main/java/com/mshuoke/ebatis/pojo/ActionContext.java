@@ -1,11 +1,8 @@
 package com.mshuoke.ebatis.pojo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +13,6 @@ public class ActionContext<T> {
 	
 	// 文件
 	private File file;
-	
-	// 流
-	private InputStream inputStream;
 	
 	// 表格内数据
 	private List<SheetInfo<T>> sheets = new ArrayList<SheetInfo<T>>();

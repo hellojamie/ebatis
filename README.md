@@ -1,11 +1,12 @@
 # Ebatis
 
 用于解析excel表格内容到 java bean			
-目前支持xls、xlsx格式文件		
+目前支持xls、xlsx格式文件	
+对于大数据量文件自动使用sax方式解析，防止内存溢出	
 
 >email：hello_jamie@outlook.com
 
-# 目录:
+# 目录（记得看注意）:
 
 1. 开始
 2. 扩展功能
@@ -16,11 +17,11 @@
 
 将jar加入到项目中
 可以访问百度网盘下载
-https://pan.baidu.com/s/1DaQT6yhLyXq6OWfTWs2Fpg
-[点击链接](https://pan.baidu.com/s/1DaQT6yhLyXq6OWfTWs2Fpg)
+https://pan.baidu.com/s/1qSLXiaCWYg--0SELaiJWhA
+[点击链接](https://pan.baidu.com/s/1qSLXiaCWYg--0SELaiJWhA)
 
 ```
-// Maven导入第三方poi依赖
+// Maven导入第三方poi依赖,或者直接把master pull下来发布到本地
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi</artifactId>
@@ -99,7 +100,7 @@ File file = new File("excel.xlsx");
 Init<ExcelPojo> init = new Init<ExcelPojo>(file, ExcelPojo.class, false);
 ActionContext<ExcelPojo> act = init.start();
 ```
-
+（注意：如果要去重的话请重写实体中的hashCode和equals方法，内部使用set来去重，false表示不去重）
 ActionContext中包含了所需要的所有信息，信息格式如下，这里以json的形式展示
 ```
 {
@@ -153,6 +154,8 @@ blankLine | 空白行的行号-数组
 errorLine | 错误行的行号-数组
 repeatLine | 重复行的行号-数组
 fileSizeByte | 文件大小（字节）
+useSax | 是否使用了sax方式
+distinct | 是否去重
 result | 最后是否解析成功，如果中间出错则是false
 sheetSize | 文件中有几个sheet
 useSax | 是否使用sax解析，即是否解析的是xlsx文件
@@ -191,9 +194,13 @@ private String type;
 # 注意
 
 * 解析xlsx大文件的时候，POI本身会占据较大内存，例如100W行15列，POI自身将消耗400M+的内存，加上解析出来的内容会大于这个值，以100W为例大概需要700M+内存
-* 表头列以从左到右遇到的第一个空列为结束标识
+* 实体中请使用包装类，不支持int等类型，请使用Integer
+* 列与列之间不能包含表头为空的列，即不能有空列将信息隔开，如果有，以空列前一列为末尾解析
 * excel文件请使用第一行表头，其余行信息的标准格式，如果有合并单元格情况，可能会解析失败（可以包含空行和空单元格，会自动过滤，但必须有表头）
 * 实体类的属性不严格要求与列的数量一致，根据需要添加映射注解即可
 * 实体类 的属性和表头的顺序没有严格要求，只要key匹配即可
+* 如果需要去重，请重写实体的hashCode和equals方法，内部使用HashSet方式去重，重写时请注意
+* 最后是否解析成功请以result属性为准
 
 
+2018/05/11

@@ -1,7 +1,6 @@
 package com.mshuoke.ebatis.impl;
 
 import java.io.File;
-import java.io.InputStream;
 
 import com.mshuoke.ebatis.pojo.ActionContext;
 
