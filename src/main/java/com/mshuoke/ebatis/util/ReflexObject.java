@@ -147,8 +147,8 @@ public class ReflexObject<T> {
 			if(thisHead != null && title.equals(thisHead) && !thisHead.equals("")){
 				
 				String string = analysisRow.get(y);
-				// 如果大于0说明截取(先做截取操作)
-				if(length > 0){
+				// 如果大于0说明截取(先做截取操作),并且防止下标超出判断一下够不够
+				if(length > 0 && string.length() > length){
 					string = string.substring(0, length);
 				}
 				
