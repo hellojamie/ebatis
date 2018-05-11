@@ -31,6 +31,11 @@ https://pan.baidu.com/s/1DaQT6yhLyXq6OWfTWs2Fpg
     <artifactId>poi-ooxml</artifactId>
     <version>3.17</version>
 </dependency>
+<dependency>
+	<groupId>xerces</groupId>
+	<artifactId>xercesImpl</artifactId>
+	<version>2.9.1</version>
+</dependency>
 ```
 
 首先你需要创建好你的实体类，假设现在有这样一个excel表格需要解析
@@ -89,8 +94,10 @@ public class People {
 // Init接受一个InputStream对象，以及一个实体对象
 // 调用start开始
 // 通过ActionContext获取需要的信息
-Init<People> init = new Init<People>(file, new People());
-ActionContext<People> act = init.start();
+// 参数依次为-文件-实体class-是否去重
+File file = new File("excel.xlsx");	
+Init<ExcelPojo> init = new Init<ExcelPojo>(file, ExcelPojo.class, false);
+ActionContext<ExcelPojo> act = init.start();
 ```
 
 ActionContext中包含了所需要的所有信息，信息格式如下，这里以json的形式展示
@@ -98,9 +105,13 @@ ActionContext中包含了所需要的所有信息，信息格式如下，这里�
 {
 　　"sheets":[
 　　　　{
-　　　　　　"line":2,
-　　　　　　"sheetName":"Sheet1",
-　　　　　　"column":5,
+　　　　　　"line":5,
+         "sheetName":"Sheet1",
+         "column":6,
+         "correctLine":5,
+         "blankLineSize":0,
+         "errorLineSize":0,
+         "repeatLineSize":0,
 　　　　　　"info":[
 　　　　　　　　{
 　　　　　　　　　　"date":1331481600000,
@@ -113,13 +124,17 @@ ActionContext中包含了所需要的所有信息，信息格式如下，这里�
 　　　　　　　　　　"phone":"14555874458"
 　　　　　　　　}
 　　　　　　],
-　　　　　　"correctLine":2
+　　　　　　"blankLine":[],
+         "errorLine":[],
+         "repeatLine":[]
 　　　　}
 　　],
 　　"fileType":"XLSX",
-　　"fileSizeByte":9604,
-　　"result":true,
-　　"sheetSize":1
+   "SheetSize":1,
+   "fileSizeByte":9138,
+   "useSax":true,
+   "distinct":false,
+   "result":true
 }
 ```
 属性名 | 含义
@@ -130,18 +145,26 @@ sheetName | sheet的名称
 column | 列数
 info | 实体对象数组，包含实体的列表，也就是行数据
 correctLine | 实际正确解析出的数量（行数）
+blankLineSize | 空行的数量
+errorLineSize | 错误行的数量，包括正则不通过被删除的
+repeatLineSize | 重复行的数量
 fileType | 文件类型
+blankLine | 空白行的行号-数组
+errorLine | 错误行的行号-数组
+repeatLine | 重复行的行号-数组
 fileSizeByte | 文件大小（字节）
 result | 最后是否解析成功，如果中间出错则是false
 sheetSize | 文件中有几个sheet
+useSax | 是否使用sax解析，即是否解析的是xlsx文件
+distinct | 是否去重
 
 使用ActionContext的getXXX方法获取上面的内容
 
 # 扩展功能
 
-@Mapping注解有两个非必选属性
+@Mapping注解有三个非必选属性
 ```
-@Mapping(key = "手机号", rex = "^[0-9]{11}$", delNull = true)
+@Mapping(key = "手机号", rex = "^[0-9]{11}$", delNull = true, length = 11)
 private String phone;
 ```
 
@@ -150,6 +173,7 @@ private String phone;
 key | 填写与excel文件头的映射名称 | 必填
 rex | 填写解析内容时使用的正则表达式，如果不符合正则则不赋值 | 非必填
 delNull | 如果该属性为null的话，是否删除整条信息，默认false不删除 | 非必填
+length | 填写提取内容的最大长度，默认不限制 | 非必填
 
 @LineNumber注解，获取当前记录是第几行，不算表头那行
 ```
@@ -165,12 +189,10 @@ private String type;
 
 
 # 注意
-因为工具还不是很完善，需要注意以下几点:
 
-* 如果excel文件有多个sheet，以第一个sheet列数为准，sheet与sheet之间的表头格式以及列数应一致，不然解析不成功
-* 列与列之间不能包含表头为空的列，即不能有空列将信息隔开
+* 解析xlsx大文件的时候，POI本身会占据较大内存，例如100W行15列，POI自身将消耗400M+的内存，加上解析出来的内容会大于这个值，以100W为例大概需要700M+内存
+* 表头列以从左到右遇到的第一个空列为结束标识
 * excel文件请使用第一行表头，其余行信息的标准格式，如果有合并单元格情况，可能会解析失败（可以包含空行和空单元格，会自动过滤，但必须有表头）
-* 目前默认只可以解析30M以内的文件
 * 实体类的属性不严格要求与列的数量一致，根据需要添加映射注解即可
 * 实体类 的属性和表头的顺序没有严格要求，只要key匹配即可
 
