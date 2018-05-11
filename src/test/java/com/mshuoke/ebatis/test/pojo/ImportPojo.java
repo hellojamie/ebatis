@@ -11,7 +11,7 @@ public class ImportPojo {
 	@Mapping(key = "编号")
 	private Integer id;
 	
-	@Mapping(key = "电话号码")
+	@Mapping(key = "电话号码",rex = "[0-9]{10}")
 	private String phone;
 	
 	@Mapping(key = "日期")
@@ -20,7 +20,7 @@ public class ImportPojo {
 	@Mapping(key = "姓名")
 	private String name;
 	
-	@Mapping(key = "点数")
+	@Mapping(key = "点数",length = 1)
 	private Double point;
 	
 	@Mapping(key = "序号")
