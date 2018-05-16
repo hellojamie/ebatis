@@ -15,10 +15,7 @@
 
 # 开始
 
-将jar加入到项目中
-可以访问百度网盘下载
-https://pan.baidu.com/s/1lHNlSl4QeLRY_N2J0jGaog
-[点击链接](https://pan.baidu.com/s/1lHNlSl4QeLRY_N2J0jGaog)
+因为经常有改动，需要手动打包发布
 
 ```
 // Maven导入第三方poi依赖,或者直接把master pull下来发布到本地
