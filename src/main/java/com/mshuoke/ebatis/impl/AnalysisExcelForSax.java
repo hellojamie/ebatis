@@ -276,8 +276,10 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 				if (cellStyleStr != null) {
 					int styleIndex = Integer.parseInt(cellStyleStr);
 		            XSSFCellStyle style = stylesTable.getStyleAt(styleIndex);
-		            formatIndex = style.getDataFormat();
-		            formatString = style.getDataFormatString();
+		            if(style != null) {
+		            	formatIndex = style.getDataFormat();
+			            formatString = style.getDataFormatString();
+		            }
 		            // 如果格式中有ymd三种字母，表示为日期格式，将他们转换
 		            // System.out.println(formatIndex  + formatString);
 		            if (formatIndex == 14 || formatIndex == 31 || formatIndex == 57 || formatIndex == 176 || formatIndex == 178 || formatIndex == 166) {
@@ -333,8 +335,14 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					 */
 					DataFormatter formatter = new DataFormatter();
 		            if (formatString != null) {
-		                String thisStr = formatter.formatRawCellContents(Double.parseDouble(lastContents), formatIndex, formatString).trim();
-		                lastContents = thisStr;
+		            	try {
+			            	double parseDouble = Double.parseDouble(lastContents);
+			            	String thisStr = formatter.formatRawCellContents(parseDouble, formatIndex, formatString).trim();
+			                lastContents = thisStr;
+		            	}catch(NumberFormatException e) {
+		            		//e.printStackTrace();
+		            	}
+		                
 		            }
 
 					/*
