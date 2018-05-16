@@ -206,6 +206,14 @@ public class RealPojo {
 	public boolean equals(Object str) {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "{\"number\":" + number + ", \"phone\":" + phone + ", \"date\":" + date + ", \"name\":" + name
+				+ ", \"parentName\":" + parentName + ", \"parentSex\":" + parentSex + ", \"sex\":" + sex + ", \"age\":"
+				+ age + ", \"kidBirth\":" + kidBirth + ", \"school\":" + school + ", \"city\":" + city + ", \"sheng\":"
+				+ sheng + ", \"batch\":" + batch + ", \"source\":" + source + ", \"hits\":" + hits + "\"} ";
+	}
 	
 }
 

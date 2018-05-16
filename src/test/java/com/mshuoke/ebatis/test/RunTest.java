@@ -84,15 +84,15 @@ public class RunTest {
 		runInit("exl/manyblanksheet.xls", false);
 	}
 
-	// @Test
+	//@Test
 	public void realTest() {
 		ActionContext<RealPojo> act = null;
 		Init<RealPojo> init = null;
 		a1 = System.currentTimeMillis();
-		File file = new File("exl/moushi20180321(100W).xlsx");
+		File file = new File("exl/性能测试20.xlsx");
 		init = new Init<RealPojo>(file, RealPojo.class, false);
 		act = init.start();
-		System.out.println(act.getSheets().get(0).getInfo().get(0).getPhone());
+		System.out.println(act.getSheets().get(0).getInfo().get(0));
 		System.out.println("over my head");
 	}
 	
