@@ -92,10 +92,17 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		int firstSheetHeadNum = -1;
 		
 		if(numberOfSheets >= 1){
-			for(int n=0; n<numberOfSheets; n++){
-				Sheet sheet = wb.getSheetAt(n);
+			Sheet sheet = wb.getSheetAt(0);
+			// 获取第一行
+			Row row = sheet.getRow(0);
+			int cellNumber = row.getLastCellNum();
+			firstSheetHeadNum = cellNumber;
+			
+			//for(int n=0; n<numberOfSheets; n++){ 暂时不执行该循环
+			for(int n=0; n<0; n++){
+				//Sheet sheet = wb.getSheetAt(n);
 				// 获取第一行
-				Row row = sheet.getRow(0);
+				//Row row = sheet.getRow(0);
 				
 				int cellNum = 0;
 				if(row != null) {
@@ -207,11 +214,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			if(cell != null) {
 				cellType = cell.getCellType();
 			}
-			// 如果表头中间有空的，则截断
-			if(cellType == -1 || cellType == Cell.CELL_TYPE_BLANK){
-				cellNum = i;
-				break;
-			}
+// 如果表头中间有空的，则截断
+//			if(cellType == -1 || cellType == Cell.CELL_TYPE_BLANK){
+//				cellNum = i;
+//				break;
+//			}
 			
 			switch(cellType){
 			case Cell.CELL_TYPE_BLANK:
