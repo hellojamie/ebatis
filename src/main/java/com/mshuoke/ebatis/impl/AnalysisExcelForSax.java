@@ -328,6 +328,9 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					List<String> lh = reflexVO.getListHeader();
 					if(lh.size() == index) {
 						lh.add(lastContents);
+					}else {
+						lh.add("");
+						lh.add(lastContents);
 					}
 				}else {
 					/*

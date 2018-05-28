@@ -30,6 +30,17 @@ public class RunTest {
 	}
 	
 	/*
+	 * 带函数公式的（格式完全正确）
+	 */
+	@Test
+	public void importTestAllRightFunction() throws Exception {
+		// =========== xlsx for sax
+		runInit("exl/function.xlsx", false);
+		// =========== xls for usermodel
+		runInit("exl/function.xls", false);
+	}
+	
+	/*
 	 * 日期包含多种格式的（但单元格都是日期类型）
 	 */
 	@Test
@@ -50,6 +61,18 @@ public class RunTest {
 		// =========== xls for usermodel
 		runInit("exl/blankcell.xls", false);
 	}
+	
+	/*
+	 * 空表头
+	 */
+	@Test
+	public void blankCellHeadTest() throws Exception {
+		// =========== xlsx for sax
+		runInit("exl/blankcellhead.xlsx", false);
+		// =========== xls for usermodel
+		runInit("exl/blankcellhead.xls", false);
+	}
+	
 	
 	/*
 	 * 空行测试
