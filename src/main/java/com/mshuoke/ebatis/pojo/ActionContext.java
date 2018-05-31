@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.mshuoke.ebatis.emnu.FileType;
 
@@ -35,6 +37,27 @@ public class ActionContext<T> {
 	
 	// 是否完成链式操作，默认false
 	private boolean result = false;
+
+	// 用于替换表头操作，一组map代表一个sheet，list代表顺序
+	private List<Map<String,String>> replaceHead;
+	
+	public ActionContext(){
+		replaceHead = new ArrayList<Map<String,String>>();
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("你的名字", "姓名");
+		Map<String,String> map2 = new HashMap<String,String>();
+		map2.put("编号", "点数");
+		replaceHead.add(map);
+		replaceHead.add(map2);
+	}
+	
+	public List<Map<String, String>> getReplaceHead() {
+		return replaceHead;
+	}
+
+	public void setReplaceHead(List<Map<String, String>> replaceHead) {
+		this.replaceHead = replaceHead;
+	}
 
 	public boolean getDistinct() {
 		return distinct;

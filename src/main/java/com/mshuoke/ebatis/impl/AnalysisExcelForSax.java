@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -26,6 +27,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 import com.mshuoke.ebatis.api.DataHandleAction;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
+import com.mshuoke.ebatis.util.ConvertUtil;
 import com.mshuoke.ebatis.util.ReflexObject;
 
 /**
@@ -94,6 +96,11 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		
 		while(sheets.hasNext()) {
 			
+			// 设置当前是第几个sheet
+			reflexVO.setSheetFlag(sheetSize);
+			// 设置进行替换表头
+			reflexVO.setReplaced(false);
+			
 			// System.out.println("Processing new sheet:\n");
 			InputStream sheet = sheets.next();
 			// 将name保存下来 新建sheetInfo对象
@@ -152,7 +159,11 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		// sheetInfo
 		private SheetInfo<T> sheetInfo;
 		// 去重使用
-		private Set<T> distinctSet;
+		private Set<T> distinctSet;	
+		// 第几个sheet
+		private int sheetFlag = 0;
+		
+		private boolean replaced = false;
 		
 		public ReflexVO() {
 			this.listHeader = new ArrayList<String>();
@@ -161,6 +172,22 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 			this.distinctSet = new HashSet<T>();
 		}
 		
+		public boolean getReplaced() {
+			return replaced;
+		}
+
+		public void setReplaced(boolean replaced) {
+			this.replaced = replaced;
+		}
+
+		public int getSheetFlag() {
+			return sheetFlag;
+		}
+
+		public void setSheetFlag(int sheetFlag) {
+			this.sheetFlag = sheetFlag;
+		}
+
 		public Set<T> getDistinctSet() {
 			return distinctSet;
 		}
@@ -254,6 +281,15 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 					isFirstLine = false;
 					reflexVO.setListHeader(new ArrayList<String>());
 				}else {
+					// 执行表头替换
+					// 每个sheet只替换一次
+					if(!reflexVO.getReplaced()) {
+						ConvertUtil.replaceHead(reflexVO.getAct().getReplaceHead(),
+								reflexVO.getListHeader(),
+								reflexVO.getSheetFlag());
+						reflexVO.setReplaced(true);
+					}
+					
 					if(isFirstLine) {
 						throw new SAXException("No table head！");
 					}

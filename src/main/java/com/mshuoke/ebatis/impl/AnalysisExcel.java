@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -23,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.mshuoke.ebatis.api.DataHandleAction;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.pojo.SheetInfo;
+import com.mshuoke.ebatis.util.ConvertUtil;
 import com.mshuoke.ebatis.util.ReflexObject;
 
 /**
@@ -140,7 +142,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 		for(int i=0; i<numberOfSheets; i++){
 			Sheet sheet = wb.getSheetAt(i);
 			SheetInfo<T> sheetInfo = new SheetInfo<T>();
-			List<T> analysisSheet = analysisSheet(sheet,act.getObjects(),sheetInfo,distinct);
+			List<T> analysisSheet = analysisSheet(sheet,act.getObjects(),sheetInfo,distinct,i,act.getReplaceHead());
 			if(analysisSheet == null) {
 				sheetInfo.setSheetName(sheet.getSheetName());
 				excelInfo.add(sheetInfo);
@@ -187,7 +189,11 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 	 * @return List<String>
 	 */
 	@SuppressWarnings("deprecation")
-	List<T> analysisSheet(Sheet sheet,Class<? extends T> object,SheetInfo<T> sheetInfo, boolean distinct){
+	List<T> analysisSheet(Sheet sheet,Class<? extends T> object, 
+			SheetInfo<T> sheetInfo, 
+			boolean distinct, 
+			int sheetFlag, 
+			List<Map<String,String>> replaceHead){
 		// 信息数据
 		int lastRowNum = sheet.getLastRowNum(); // 一共几行
 		
@@ -242,6 +248,10 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 				headStr.add("");
 			}
 		}
+		
+		// 解析完毕表头后进行替换
+		ConvertUtil.replaceHead(replaceHead,headStr,sheetFlag);
+		
 		// 解析cell
 		
 		for(int i=1; i<=lastRowNum; i++){

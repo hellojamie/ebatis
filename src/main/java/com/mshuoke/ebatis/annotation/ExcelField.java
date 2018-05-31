@@ -22,4 +22,6 @@ public @interface ExcelField {
 	
 	public int width() default -1;
 	
+	public boolean merge() default false;
+	
 }

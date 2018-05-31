@@ -23,7 +23,7 @@ public class CreateExcelPOJO {
 	@Mapping(key = "日期")
 	private Date date;
 	
-	@ExcelField(position = 2, name = "年龄", width = 6)
+	@ExcelField(position = 2, name = "年龄", width = 6, merge = true)
 	@Mapping(key = "年龄")
 	private Integer age;
 

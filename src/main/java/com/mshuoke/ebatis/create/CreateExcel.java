@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +31,31 @@ import com.mshuoke.ebatis.util.ConvertUtil;
 
 public class CreateExcel<T> {
 	
-	public void create(List<T> list, String sheetName, File file) throws NoEnableExcelMakerException {
+	// 创建对象准备生成
+	private HSSFWorkbook info = null;
+	// 设置sheet名称
+	private HSSFSheet sheet = null;
+	// 样式
+	private HSSFCellStyle cellStyle = null;
+	
+	public HSSFWorkbook getHSSFWorkbook() {
+		return info;
+	}
+	
+	public HSSFSheet getHSSFSheet() {
+		return sheet;
+	}
+	
+	public void write(File file) {
+		try {
+			info.write(file);
+			info.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void create(List<T> list, String sheetName) throws NoEnableExcelMakerException {
 		
 		// 获取一个实体用于获取对象拥有哪些注解
 		Class<? extends Object> class1 = list.get(0).getClass();
@@ -46,6 +71,8 @@ public class CreateExcel<T> {
 		Map<Integer,String[]> map = new HashMap<Integer,String[]>();
 		// 遍历使用
 		Set<Integer> keySet;
+		// 合并行的options
+		List<Integer> mergeNums = new ArrayList<Integer>();
 		
 		if(enableExcelMaker == null) {
 			// 没这个注解不执行，抛错
@@ -73,20 +100,27 @@ public class CreateExcel<T> {
 			int position = excelField.position();
 			// 列宽
 			String width = String.valueOf(excelField.width());
+			// 是否合并
+			String merge = String.valueOf(excelField.merge());
 			// 属性名称
 			String fieldName = x.getName();
 			// 将这些需要的属性存放{生成的列名，属性名，排序方式，是否合并}
-			String[] infos = new String[]{name, fieldName, width};
+			String[] infos = new String[]{name, fieldName, width, merge};
 			map.put(position, infos);
+			
+			if(Boolean.valueOf(merge)) {
+				mergeNums.add(position);
+			}
+			
 		}
 
 		
 		// 创建对象准备生成
-		HSSFWorkbook info = new HSSFWorkbook();
+		info = new HSSFWorkbook();
 		// 设置sheet名称
-		HSSFSheet sheet = info.createSheet(sheetName);
+		sheet = info.createSheet(sheetName);
 		// 样式
-		HSSFCellStyle cellStyle = info.createCellStyle();
+		cellStyle = info.createCellStyle();
 		// 设置居中
 		cellStyle.setAlignment(HorizontalAlignment.CENTER); // 居中
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER); // 居中
@@ -144,6 +178,14 @@ public class CreateExcel<T> {
 	        createCell.setCellStyle(getStyleTitle(info));
 		}
 		
+		Map<Integer,String> beforeMap = new HashMap<Integer,String>();
+		
+		// 初始化对比内容
+		for(Integer x:mergeNums) {
+			beforeMap.put(x, null);
+		}
+				
+		
 		for(int i = 0; i < list.size(); i++) {
 			// 循环集合获取对象，准备生成cell
 			T t = list.get(i);
@@ -163,6 +205,7 @@ public class CreateExcel<T> {
 				if(invoke == null) {
 					continue;
 				}
+				
 				String typeName = invoke.getClass().getTypeName();
 				HSSFCell createCell = row.createCell(x);
 				createCell.setCellStyle(cellCrs);
@@ -201,14 +244,15 @@ public class CreateExcel<T> {
 					break;
 				}
 				
+				String string2 = beforeMap.get(x);
+				String invokStr = String.valueOf(invoke);
+				// 相同合并
+				if(string2 != null && string2.equals(invokStr)) {
+					sheet.addMergedRegion(new CellRangeAddress(i + firstLineIndex,i + 1 + firstLineIndex,x,x));
+				}
+				beforeMap.put(x, invokStr);
+				
 			}
-		}
-		
-		try {
-			info.write(file);
-			info.close();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 		
 	}
@@ -218,7 +262,7 @@ public class CreateExcel<T> {
 	 * @param info
 	 * @return
 	 */
-	public HSSFCellStyle getStyleTitle(HSSFWorkbook info) {
+	private HSSFCellStyle getStyleTitle(HSSFWorkbook info) {
 		HSSFCellStyle style = getStyle(info);
 		HSSFFont crsFont = info.createFont();
 		crsFont.setBold(true);
@@ -232,7 +276,7 @@ public class CreateExcel<T> {
 	 * @param info
 	 * @return
 	 */
-	public HSSFCellStyle getStyleBold(HSSFWorkbook info) {
+	private HSSFCellStyle getStyleBold(HSSFWorkbook info) {
 		HSSFCellStyle style = getStyle(info);
 		HSSFFont crsFont = info.createFont();
 		crsFont.setBold(true);
@@ -245,7 +289,7 @@ public class CreateExcel<T> {
 	 * @param info
 	 * @return
 	 */
-	public HSSFCellStyle getStyle(HSSFWorkbook info) {
+	private HSSFCellStyle getStyle(HSSFWorkbook info) {
 		// 头样式
 		HSSFCellStyle crs = info.createCellStyle();
 		crs.setBorderBottom(BorderStyle.THIN); //下边框    

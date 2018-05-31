@@ -3,6 +3,9 @@ package com.mshuoke.ebatis.test;
 import java.io.File;
 import java.util.List;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.junit.Test;
 
 import com.mshuoke.ebatis.create.CreateExcel;
@@ -10,6 +13,8 @@ import com.mshuoke.ebatis.impl.Init;
 import com.mshuoke.ebatis.pojo.ActionContext;
 import com.mshuoke.ebatis.test.pojo.CreateExcelPOJO;
 import com.mshuoke.ebatis.test.pojo.ImportPojo;
+import com.mshuoke.ebatis.test.pojo.Linshi01;
+import com.mshuoke.ebatis.test.pojo.Linshi02;
 import com.mshuoke.ebatis.test.pojo.RealPojo;
 
 public class RunTest {
@@ -106,6 +111,17 @@ public class RunTest {
 		// =========== xls for usermodel
 		runInit("exl/manyblanksheet.xls", false);
 	}
+	
+	/*
+	 * 替换表头“你的名字”替换为“姓名”
+	 */
+	@Test
+	public void replaceHeadTest() throws Exception {
+		// =========== xlsx for sax
+		runInit("exl/replacehead.xlsx", false);
+		// =========== xls for usermodel
+		runInit("exl/replacehead.xls", false);
+	}
 
 	//@Test
 	public void realTest() {
@@ -145,6 +161,42 @@ public class RunTest {
 		System.out.println("耗时（ms）：" + a2);
 	}
 	
+	@Test
+	public void linshi() throws Exception {
+		ActionContext<Linshi01> act = null;
+		Init<Linshi01> init = null;
+		File file = new File("C:\\Users\\Administrator\\Desktop\\11502_20180528_APP.xlsx");
+		init = new Init<Linshi01>(file, Linshi01.class, false);
+		act = init.start();
+		List<Linshi01> info = act.getSheets().get(0).getInfo();
+		System.out.println(info.size());
+		
+		ActionContext<Linshi02> act2 = null;
+		Init<Linshi02> init2 = null;
+		a1 = System.currentTimeMillis();
+		File file2 = new File("C:\\Users\\Administrator\\Desktop\\第一批.xlsx");
+		init2 = new Init<Linshi02>(file2, Linshi02.class, false);
+		act2 = init2.start();
+		List<Linshi02> info2 = act2.getSheets().get(0).getInfo();
+		System.out.println(info2.size());
+		
+		for(Linshi01 x:info) {
+			for(Linshi02 y:info2) {
+				if(x.getMd5().equalsIgnoreCase(y.getMd5()) && !y.getPhone().equalsIgnoreCase("null")) {
+					x.setPhone(y.getPhone());
+					break;
+				}
+			}
+		}
+		
+		CreateExcel<Linshi01> c = new CreateExcel<Linshi01>();
+		try {
+			c.create(info, "sheet1");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+	}
 	
 	
 	
@@ -160,9 +212,7 @@ public class RunTest {
 	
 	
 	
-	
-	
-	//@Test
+	@Test
 	public void createExcelTest() {
 		
 		File file = new File("exl/create.xlsx");
@@ -174,7 +224,12 @@ public class RunTest {
 		
 		CreateExcel<CreateExcelPOJO> c = new CreateExcel<CreateExcelPOJO>();
 		try {
-			c.create(list, "这是一个sheet名", new File("生成excel.xlsx"));
+			c.create(list, "这是一个sheet名");
+			HSSFSheet sheet = c.getHSSFSheet();
+			HSSFRow row = sheet.createRow(10);
+			HSSFCell createCell = row.createCell(0);
+			createCell.setCellValue("bbbbbb");
+			c.write(new File("生成excel.xlsx"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
