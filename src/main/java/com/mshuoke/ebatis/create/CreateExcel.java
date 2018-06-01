@@ -179,10 +179,12 @@ public class CreateExcel<T> {
 		}
 		
 		Map<Integer,String> beforeMap = new HashMap<Integer,String>();
+		Map<Integer,Integer> beforeMapMerge = new HashMap<Integer,Integer>();
 		
 		// 初始化对比内容
 		for(Integer x:mergeNums) {
 			beforeMap.put(x, null);
+			beforeMapMerge.put(x, 0);
 		}
 				
 		
@@ -244,13 +246,37 @@ public class CreateExcel<T> {
 					break;
 				}
 				
-				String string2 = beforeMap.get(x);
-				String invokStr = String.valueOf(invoke);
-				// 相同合并
-				if(string2 != null && string2.equals(invokStr)) {
-					sheet.addMergedRegion(new CellRangeAddress(i + firstLineIndex,i + 1 + firstLineIndex,x,x));
+				
+				Set<Integer> keySet2 = beforeMap.keySet();
+				
+				if(!keySet2.contains(x)) {
+					continue;
 				}
-				beforeMap.put(x, invokStr);
+				
+				String string2 = beforeMap.get(x);
+					
+					String invokStr = String.valueOf(invoke);
+					// 相同合并
+					if(string2 != null && string2.equals(invokStr)) {
+						
+						if(i == list.size() - 1) {
+							sheet.addMergedRegion(new CellRangeAddress(i + firstLineIndex - beforeMapMerge.get(x),
+									i + 1 + firstLineIndex,x,x));
+						}
+						
+						Integer thesIndex = beforeMapMerge.get(x);
+						beforeMapMerge.put(x, thesIndex + 1);
+						
+					}else {
+						if(beforeMapMerge.get(x) != null && beforeMapMerge.get(x) != 0) {
+							sheet.addMergedRegion(new CellRangeAddress(i + firstLineIndex - beforeMapMerge.get(x),
+									i + firstLineIndex,x,x));
+						}
+						beforeMapMerge.put(x, 0);
+					}
+					beforeMap.put(x, invokStr);
+				
+				
 				
 			}
 		}
@@ -292,6 +318,7 @@ public class CreateExcel<T> {
 	private HSSFCellStyle getStyle(HSSFWorkbook info) {
 		// 头样式
 		HSSFCellStyle crs = info.createCellStyle();
+		crs.setWrapText(true);
 		crs.setBorderBottom(BorderStyle.THIN); //下边框    
 		crs.setBorderLeft(BorderStyle.THIN);//左边框    
 		crs.setBorderTop(BorderStyle.THIN);//上边框    

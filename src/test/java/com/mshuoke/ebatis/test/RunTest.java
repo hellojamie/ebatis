@@ -1,7 +1,9 @@
 package com.mshuoke.ebatis.test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -16,6 +18,7 @@ import com.mshuoke.ebatis.test.pojo.ImportPojo;
 import com.mshuoke.ebatis.test.pojo.Linshi01;
 import com.mshuoke.ebatis.test.pojo.Linshi02;
 import com.mshuoke.ebatis.test.pojo.RealPojo;
+import com.mshuoke.ebatis.test.pojo.ResultPojo;
 
 public class RunTest {
 	
@@ -234,6 +237,63 @@ public class RunTest {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	@Test
+	public void createExcelTest2() {
+		CreateExcel<ResultPojo> c = new CreateExcel<ResultPojo>();
+		
+		// 生成模拟数据
+		String[] strings = new String[] {"上海市","东莞市","佛山市","北京市","南京市","南通市","厦门市","台州市","嘉兴市","广州市","西安市"};
+		Random random = new Random();
+		
+		List<ResultPojo> list = new ArrayList<ResultPojo>();
+		for(int i = 0; i < 10; i ++) {
+			ResultPojo re = new ResultPojo("CSJ创数记",
+					"行为生成日期、类目、城市、行为标记、手机号、导入日期、导入时间",
+					"2018-05-30",
+					"学科类辅导",
+					strings[random.nextInt(10)],
+					470,4398,471,4068,471,4068,471,4068);
+			list.add(re);
+		}
+		for(int i = 0; i < 6; i ++) {
+			ResultPojo re = new ResultPojo("CSJ创数记",
+					"行为生成日期、类目、城市、行为标记、手机号、导入日期、导入时间",
+					"2018-05-30",
+					"成人英语",
+					strings[random.nextInt(10)],
+					470,5622,471,5622,471,5622,471,5622);
+			list.add(re);
+		}
+		for(int i = 0; i < 10; i ++) {
+			ResultPojo re = new ResultPojo("CSJ创数记",
+					"行为生成日期、类目、城市、行为标记、手机号、导入日期、导入时间",
+					"2018-05-30",
+					"青少儿英语",
+					strings[random.nextInt(10)],
+					470,6666,471,6666,471,6666,471,6666);
+			list.add(re);
+		}
+		// 生成模拟数据结束
+		try {
+			c.create(list, "这是一个sheet名");
+			HSSFSheet sheet = c.getHSSFSheet();
+			HSSFRow row = sheet.createRow(list.size() + 2);
+			HSSFCell createCell = row.createCell(0);
+			createCell.setCellValue("汇总");
+			HSSFCell all1 = row.createCell(6);
+			all1.setCellValue(10781);
+			HSSFCell all2 = row.createCell(8);
+			all2.setCellValue(10445);
+			HSSFCell all3 = row.createCell(10);
+			all3.setCellValue(10445);
+			HSSFCell all4 = row.createCell(12);
+			all4.setCellValue(10445);
+			c.write(new File("生成excel.xlsx"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }
