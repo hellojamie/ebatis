@@ -89,7 +89,7 @@ public class People {
 
 然后将你的文档以流的方式加载进来，通过以下代码开始解析
 ```
-// Init接受一个InputStream对象，以及一个实体对象
+// Init接受一个File对象，以及一个实体对象
 // 调用start开始
 // 通过ActionContext获取需要的信息
 // 参数依次为-文件-实体class-是否去重
