@@ -1,6 +1,8 @@
 package cc.ebatis.test;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,6 +19,17 @@ public class RunTest {
 	// 计时
 	public long a1;
 	public long a2;
+	
+	/*
+	 * 完全正确的数据（格式完全正确/流操作）
+	 */
+	@Test
+	public void importTestAllRightInputStream() throws Exception {
+		// =========== xlsx for sax
+		runInitForStream("exl/allright.xlsx", false);
+		// =========== xls for usermodel
+		runInitForStream("exl/allright.xls", false);
+	}
 	
 	/*
 	 * 完全正确的数据（格式完全正确）
@@ -129,6 +142,20 @@ public class RunTest {
 		a1 = System.currentTimeMillis();
 		File file = new File(fileName);
 		init = new Init<ImportPojo>(file, ImportPojo.class, distinct);
+		act = init.start();
+		printInfo(act);
+	}
+	
+	/*
+	 * run 程序 流操作
+	 */
+	public void runInitForStream(String fileName, boolean distinct) throws Exception {
+		ActionContext<ImportPojo> act = null;
+		Init<ImportPojo> init = null;
+		a1 = System.currentTimeMillis();
+		File file = new File(fileName);
+		InputStream in = new FileInputStream(file);
+		init = new Init<ImportPojo>(in, ImportPojo.class, distinct);
 		act = init.start();
 		printInfo(act);
 	}

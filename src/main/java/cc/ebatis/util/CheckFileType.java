@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import cc.ebatis.emnu.FileType;
+import cc.ebatis.pojo.ActionContext;
 
 public class CheckFileType {
 	
@@ -34,9 +35,11 @@ public class CheckFileType {
     /** 
      * 判断文件类型 
      */  
-    public static FileType getType(File file) throws IOException {  
-          
-    	InputStream inputStream = new FileInputStream(file);
+    public static FileType getType(ActionContext act) throws IOException {  
+        
+    	File file = act.getFile();
+    	
+    	InputStream inputStream = act.getInputStream();
     	
         String fileHead = getFileHeader(inputStream);  
         

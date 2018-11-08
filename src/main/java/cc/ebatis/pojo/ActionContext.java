@@ -1,8 +1,11 @@
 package cc.ebatis.pojo;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,9 @@ public class ActionContext<T> {
 	
 	// 文件
 	private File file;
+	
+	// 流备份
+	private ByteArrayOutputStream byteArrayOutputStream = null;
 	
 	// 表格内数据
 	private List<SheetInfo<T>> sheets = new ArrayList<SheetInfo<T>>();
@@ -125,7 +131,24 @@ public class ActionContext<T> {
 			}
 			return inputStream;
 		}
-		return null;
+		
+		InputStream inputStreamReal = new ByteArrayInputStream(this.byteArrayOutputStream.toByteArray());
+		
+		return inputStreamReal;
+	}
+	
+	public void setInputStream(InputStream inputStream) throws IOException {
+		
+		if(this.byteArrayOutputStream == null) {
+			this.byteArrayOutputStream = new ByteArrayOutputStream();
+			byte[] buffer = new byte[inputStream.available()];
+			
+			int len;  
+			while ((len = inputStream.read(buffer)) > -1 ) {  
+			    this.byteArrayOutputStream.write(buffer, 0, len);  
+			}
+			this.byteArrayOutputStream.flush();
+		}
 	}
 
 	@Override

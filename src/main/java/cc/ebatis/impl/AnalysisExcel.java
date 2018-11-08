@@ -46,12 +46,7 @@ public class AnalysisExcel<T> implements DataHandleAction<T> {
 			return;
 		}
 		
-		InputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream(act.getFile());
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
-		}
+		InputStream inputStream = act.getInputStream();
 		
 		Workbook wb = null;
 		// 创建poi对象

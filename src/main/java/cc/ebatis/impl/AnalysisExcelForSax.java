@@ -1,6 +1,9 @@
 package cc.ebatis.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,7 +54,12 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		try {
 			ReflexVO<T> reflexVO = new ReflexVO<T>();
 			reflexVO.setAct(act);
-			processAllSheets(act.getFile(), reflexVO);
+			if(act.getFile() == null) {
+				processAllSheets(act.getInputStream(), reflexVO);
+			}else {
+				processAllSheets(act.getFile(), reflexVO);
+			}
+
 		} catch (Exception e) {
 			rollback(act);
 			e.printStackTrace();
@@ -123,6 +131,52 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 		reflexVO.getAct().setResult(true);
 	}
 
+	public void processAllSheets(InputStream file, ReflexVO<T> reflexVO) throws Exception {
+		OPCPackage pkg = OPCPackage.open(file);
+		XSSFReader r = new XSSFReader(pkg);
+		
+		stylesTable = r.getStylesTable();
+		SharedStringsTable sst = r.getSharedStringsTable();
+		
+		XMLReader parser = fetchSheetParser(sst,reflexVO);
+		
+		// Iterator<InputStream> sheets = r.getSheetsData();
+		
+		XSSFReader.SheetIterator sheets = (XSSFReader.SheetIterator) r.getSheetsData();
+		
+		Integer sheetSize = 0;
+		
+		while(sheets.hasNext()) {
+			
+			// System.out.println("Processing new sheet:\n");
+			InputStream sheet = sheets.next();
+			// 将name保存下来 新建sheetInfo对象
+			SheetInfo<T> sheetInfo = new SheetInfo<T>();
+			// 保存名字
+			sheetInfo.setSheetName(sheets.getSheetName());
+			// 设置对象进VO中
+			reflexVO.setSheetInfo(sheetInfo);
+			// sheet数量加一
+			sheetSize++;
+			InputSource sheetSource = new InputSource(sheet);
+			parser.parse(sheetSource);
+			sheet.close();
+			// 在解析完毕一个sheet后，设置列的数量，数量为头的列数
+			sheetInfo.setColumn(reflexVO.getListHeader().size());
+			// 设置错误、空白、重复数量
+			sheetInfo.setBlankLineSize(sheetInfo.getBlankLine().size());
+			sheetInfo.setErrorLineSize(sheetInfo.getErrorLine().size());
+			sheetInfo.setRepeatLineSize(sheetInfo.getRepeatLine().size());
+			// 在解析完毕后，将sheetInfo加入到act中
+			reflexVO.getAct().addSheets(reflexVO.getSheetInfo());
+			// 下一个sheet操作
+		}
+		// 全部解析完毕后，设置sheet数量
+		reflexVO.getAct().setSheetSize(sheetSize);
+		// 设置解析结果为true
+		reflexVO.getAct().setResult(true);
+	}
+	
 	public XMLReader fetchSheetParser(SharedStringsTable sst, ReflexVO<T> reflexVO) throws SAXException {
 		
 		XMLReader parser =

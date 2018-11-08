@@ -1,6 +1,8 @@
 package cc.ebatis.impl;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 import cc.ebatis.pojo.ActionContext;
 
@@ -19,6 +21,13 @@ public class Init<T> {
 	public Init(File file, Class<? extends T> t, boolean distinct) {
 		super();
 		act.setFile(file);
+		act.setObjects(t);
+		act.setDistinct(distinct);
+	}
+	
+	public Init(InputStream inputStream, Class<? extends T> t, boolean distinct) throws IOException {
+		super();
+		act.setInputStream(inputStream);
 		act.setObjects(t);
 		act.setDistinct(distinct);
 	}

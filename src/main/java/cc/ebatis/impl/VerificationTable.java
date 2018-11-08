@@ -26,7 +26,7 @@ public class VerificationTable<T> implements DataHandleAction<T>{
 		FileType type = null;
 		InputStream inputStream = null;
 		try {
-			type = CheckFileType.getType(act.getFile());
+			type = CheckFileType.getType(act);
 			// 如果类型不存在，抛出
 			if(type == null){
 				throw new FileTypeErrorException("This file type is error, Not's xsl or xslx");
