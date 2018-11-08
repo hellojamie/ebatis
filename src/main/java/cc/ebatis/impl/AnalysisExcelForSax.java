@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -134,7 +135,7 @@ public class AnalysisExcelForSax<T> implements DataHandleAction<T>{
 	public void processAllSheets(InputStream file, ReflexVO<T> reflexVO) throws Exception {
 		OPCPackage pkg = OPCPackage.open(file);
 		XSSFReader r = new XSSFReader(pkg);
-		
+		IOUtils.closeQuietly(file);
 		stylesTable = r.getStylesTable();
 		SharedStringsTable sst = r.getSharedStringsTable();
 		
