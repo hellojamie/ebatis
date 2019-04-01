@@ -88,6 +88,7 @@ public class People {
 ```
 
 然后将你的文档以流的方式加载进来，通过以下代码开始解析
+现在支持传入流对象了，new Init提供了多个构造（但是当时为什么没弄流对象是因为在测试Apachi poi的那个部分的时候，发现使用传入流对象的方法会导致消耗更多的内存）
 ```
 // Init接受一个File对象，以及一个实体对象
 // 调用start开始
@@ -96,6 +97,7 @@ public class People {
 File file = new File("excel.xlsx");	
 Init<ExcelPojo> init = new Init<ExcelPojo>(file, ExcelPojo.class, false);
 ActionContext<ExcelPojo> act = init.start();
+// 现在支持传入流对象了，new Init提供了多个构造
 ```
 （注意：如果要去重的话请重写实体中的hashCode和equals方法，内部使用set来去重，false表示不去重）
 ActionContext中包含了所需要的所有信息，信息格式如下，这里以json的形式展示
@@ -186,6 +188,8 @@ private Integer line;
 @MappingSheetName
 private String type;
 ```
+
+单元测试的最下方有导出的test案例
 
 
 # 注意
