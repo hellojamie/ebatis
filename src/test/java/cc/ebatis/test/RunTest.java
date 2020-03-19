@@ -202,6 +202,8 @@ public class RunTest {
 		CreateExcel<CreateExcelPOJO> c = new CreateExcel<CreateExcelPOJO>();
 		try {
 			c.create(list, "这是一个sheet名");
+			// 可以使用该方法拿到hssfWorkbook自行处理
+			// HSSFWorkbook hssfWorkbook = c.getHSSFWorkbook();
 			c.write(new File("excel.xlsx"));
 		} catch (Exception e) {
 			e.printStackTrace();
