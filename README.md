@@ -13,8 +13,6 @@
 
 # 开始
 
-因为经常有改动，需要手动打包发布
-
 ```
 // Maven导入第三方poi依赖,或者直接把master pull下来发布到本地
 <dependency>
