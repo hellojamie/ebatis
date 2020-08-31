@@ -4,8 +4,6 @@
 目前支持xls、xlsx格式文件	
 对于大数据量文件自动使用sax方式解析，防止内存溢出	
 
->email：hello_jamie@outlook.com
-
 # 目录（记得看注意）:
 
 1. 开始
